@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-heading-main: var(--font-heading-main), "Cormorant Garamond", Georgia, serif;
+  --font-heading-sub: var(--font-heading-sub), "Marcellus", Georgia, serif;
+  --font-body: var(--font-body), "EB Garamond", Garamond, serif;
+  --font-ui: var(--font-ui), "Montserrat", sans-serif;
+
+  /* 1. Core Foundation: Background & Canvases */
+  --color-vanilla-custard: #fbf7ed;
+  --color-vanilla-custard-900: #fbf7ed;
+  --color-vanilla-custard-800: #f6efdb;
+  --color-vanilla-custard-700: #eee3c3;
+
+  /* 2. Luxury Dark & Reading Hierarchy */
+  --color-ink-black: #001219;
+  --color-ink-black-100: #001d27;
+  --color-ink-black-300: #000b0f;
+
+  /* 3. Primary CTAs & Sub-labels */
+  --color-dark-teal: #005f73;
+  --color-dark-teal-100: #001417;
+  --color-dark-teal-400: #004e5e;
+
+  /* 4. Primary Royal Accents (Bridal & Heritage) */
+  --color-brown-red: #9b2226;
+  --color-oxidized-iron: #ae2012;
+
+  /* 5. Festive Interactive Accents */
+  --color-burnt-caramel: #ca6702;
+  --color-rusty-spice: #bb3e03;
+
+  /* 6. Metallic / Zari Highlights (Gold & Warmth) */
+  --color-golden-orange: #ee9b00;
+  --color-golden-orange-400: #c07d00;
+
+  /* 7. Secondary Fresh Accents (Summer / Organza / Chanderi) */
+  --color-pearl-aqua: #94d2bd;
+  --color-dark-cyan: #0a9396;
+}
+
+:root {
+  --background: #fbf7ed;
+  --foreground: #001219;
+  --card: #ffffff;
+  --card-foreground: #001219;
+  --popover: #ffffff;
+  --popover-foreground: #001219;
+  --primary: #005f73;
+  --primary-foreground: #fbf7ed;
+  --secondary: #f6efdb;
+  --secondary-foreground: #001219;
+  --muted: #f6efdb;
+  --muted-foreground: #004e5e;
+  --accent: #f6efdb;
+  --accent-foreground: #001219;
+  --destructive: #9b2226;
+  --border: rgba(238, 155, 0, 0.25);
+  --input: rgba(0, 78, 94, 0.2);
+  --ring: #ee9b00;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: #001219;
+  --foreground: #fbf7ed;
+  --card: #001d27;
+  --card-foreground: #fbf7ed;
+  --popover: #001d27;
+  --popover-foreground: #fbf7ed;
+  --primary: #ee9b00;
+  --primary-foreground: #001219;
+  --secondary: #001417;
+  --secondary-foreground: #fbf7ed;
+  --muted: #001417;
+  --muted-foreground: #94d2bd;
+  --accent: #001417;
+  --accent-foreground: #fbf7ed;
+  --destructive: #ae2012;
+  --border: rgba(238, 155, 0, 0.25);
+  --input: rgba(148, 210, 189, 0.2);
+  --ring: #ee9b00;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-vanilla-custard-900);
+    color: var(--color-ink-black-300);
+    font-family: var(--font-body);
+  }
+
+  h1, h2 {
+    font-family: var(--font-heading-main);
+    color: var(--color-ink-black);
+    letter-spacing: -0.01em;
+  }
+
+  h3, h4, h5, h6 {
+    font-family: var(--font-heading-sub);
+    color: var(--color-ink-black);
+    letter-spacing: -0.005em;
+  }
+
+  p {
+    font-family: var(--font-body);
+    color: var(--color-ink-black-300);
+  }
+
+  button, input, select, textarea, .font-ui {
+    font-family: var(--font-ui);
+  }
+}
