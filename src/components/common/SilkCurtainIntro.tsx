@@ -2,233 +2,289 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * SilkCurtainIntro — Luxury Brand Splash Screen
- * ──────────────────────────────────────────────
- * Design philosophy: Zara / Burberry / Sabyasachi level intro.
- *
- * Phases:
- *   "enter"   0ms     → Elements animate in (logo, text stagger up)
- *   "hold"    600ms   → Brand moment — clean, readable, beautiful
- *   "shimmer" 2200ms  → Gold shimmer sweeps across the brand name
- *   "exit"    2700ms  → Whole screen fades up + slight drift. Site revealed.
- *   "done"    4000ms  → Component unmounts from DOM entirely.
+ * SilkCurtainIntro
+ * ─────────────────────────────────────────────────────────
+ * The saree IS the curtain — fully visible, rich and vivid.
+ * Two panels of the saree image close over the page on load,
+ * brand identity glows in the center, then they slide apart
+ * like real stage curtains made of silk.
  */
+
 export function SilkCurtainIntro() {
-  const [phase, setPhase] = useState<"enter" | "hold" | "shimmer" | "exit" | "done">("enter");
+  const [phase, setPhase] = useState<"enter" | "hold" | "opening" | "done">("enter");
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("hold"),    600);
-    const t2 = setTimeout(() => setPhase("shimmer"), 2200);
-    const t3 = setTimeout(() => setPhase("exit"),    2700);
-    const t4 = setTimeout(() => setPhase("done"),    4000);
-    return () => [t1, t2, t3, t4].forEach(clearTimeout);
+    const t1 = setTimeout(() => setPhase("hold"),    300);
+    const t2 = setTimeout(() => setPhase("opening"), 2800);
+    const t3 = setTimeout(() => setPhase("done"),    2800 + 1400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   if (phase === "done") return null;
 
-  const exiting  = phase === "exit";
-  const entered  = phase !== "enter";
-  const shimming = phase === "shimmer" || phase === "exit";
+  const isOpen    = phase === "opening";
+  const isVisible = phase === "hold" || phase === "opening";
 
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden"
-      style={{
-        opacity:    exiting ? 0 : 1,
-        transform:  exiting ? "translateY(-18px)" : "translateY(0)",
-        transition: exiting
-          ? "opacity 1.15s cubic-bezier(0.4,0,0.2,1), transform 1.15s cubic-bezier(0.4,0,0.2,1)"
-          : "none",
-      }}
+      className="fixed inset-0 z-[9999] overflow-hidden"
+      style={{ pointerEvents: isOpen ? "none" : "all" }}
     >
-      {/* ── FULL-SCREEN BACKGROUND IMAGE ── */}
-      {/* Single image, full viewport, no split, no seam */}
-      <Image
-        src="/images/sarre1.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-center"
-        style={{ willChange: "opacity" }}
-      />
 
-      {/* ── RICH DARK OVERLAY ── */}
-      {/* Darkens the saree image into a luxurious moody backdrop */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 70% at 50% 50%, rgba(20,4,4,0.72) 0%, rgba(10,2,2,0.88) 100%),
-            linear-gradient(180deg, rgba(20,4,4,0.55) 0%, rgba(10,2,2,0.75) 100%)
-          `,
-        }}
-      />
-
-      {/* ── SUBTLE CORNER GOLD FILIGREE ── */}
-      {/* Top-left */}
-      <svg className="absolute top-4 left-4 sm:top-7 sm:left-7 w-16 sm:w-24 opacity-30" viewBox="0 0 96 96" fill="none">
-        <path d="M4 4 L4 36 Q4 4 36 4Z" stroke="#d4af37" strokeWidth="1"/>
-        <path d="M4 4 L24 4 Q4 4 4 24Z" stroke="#d4af37" strokeWidth="0.5" opacity="0.6"/>
-        <circle cx="4" cy="4" r="2" fill="#d4af37" opacity="0.7"/>
-        <path d="M14 4 Q9 9 4 14" stroke="#d4af37" strokeWidth="0.5" opacity="0.5"/>
-      </svg>
-      {/* Top-right */}
-      <svg className="absolute top-4 right-4 sm:top-7 sm:right-7 w-16 sm:w-24 opacity-30 rotate-90" viewBox="0 0 96 96" fill="none">
-        <path d="M4 4 L4 36 Q4 4 36 4Z" stroke="#d4af37" strokeWidth="1"/>
-        <path d="M4 4 L24 4 Q4 4 4 24Z" stroke="#d4af37" strokeWidth="0.5" opacity="0.6"/>
-        <circle cx="4" cy="4" r="2" fill="#d4af37" opacity="0.7"/>
-        <path d="M14 4 Q9 9 4 14" stroke="#d4af37" strokeWidth="0.5" opacity="0.5"/>
-      </svg>
-      {/* Bottom-left */}
-      <svg className="absolute bottom-4 left-4 sm:bottom-7 sm:left-7 w-16 sm:w-24 opacity-30 -rotate-90" viewBox="0 0 96 96" fill="none">
-        <path d="M4 4 L4 36 Q4 4 36 4Z" stroke="#d4af37" strokeWidth="1"/>
-        <path d="M4 4 L24 4 Q4 4 4 24Z" stroke="#d4af37" strokeWidth="0.5" opacity="0.6"/>
-        <circle cx="4" cy="4" r="2" fill="#d4af37" opacity="0.7"/>
-        <path d="M14 4 Q9 9 4 14" stroke="#d4af37" strokeWidth="0.5" opacity="0.5"/>
-      </svg>
-      {/* Bottom-right */}
-      <svg className="absolute bottom-4 right-4 sm:bottom-7 sm:right-7 w-16 sm:w-24 opacity-30 rotate-180" viewBox="0 0 96 96" fill="none">
-        <path d="M4 4 L4 36 Q4 4 36 4Z" stroke="#d4af37" strokeWidth="1"/>
-        <path d="M4 4 L24 4 Q4 4 4 24Z" stroke="#d4af37" strokeWidth="0.5" opacity="0.6"/>
-        <circle cx="4" cy="4" r="2" fill="#d4af37" opacity="0.7"/>
-        <path d="M14 4 Q9 9 4 14" stroke="#d4af37" strokeWidth="0.5" opacity="0.5"/>
-      </svg>
-
-      {/* ── THIN GOLD BORDER FRAME ── */}
-      <div
-        className="absolute"
-        style={{
-          inset: "clamp(14px, 2.5vw, 28px)",
-          border: "1px solid rgba(212,175,55,0.28)",
-          borderRadius: "2px",
-          boxShadow: "inset 0 0 40px rgba(212,175,55,0.04)",
-          opacity: entered ? 1 : 0,
-          transition: "opacity 1s ease 0.3s",
-        }}
-      />
-
-      {/* ── CENTRE BRAND CONTENT ── */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center select-none">
-
-        {/* Top ornament — fades + rises in */}
-        <div
-          className="flex items-center gap-3 mb-5"
-          style={{
-            opacity: entered ? 1 : 0,
-            transform: entered ? "translateY(0)" : "translateY(10px)",
-            transition: "opacity 0.9s ease 0.15s, transform 0.9s ease 0.15s",
-          }}
-        >
-          <div className="h-px w-12 sm:w-20" style={{ background: "linear-gradient(to right, transparent, #d4af37bb)" }} />
-          {/* Diamond ornament */}
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-            <path d="M5.5 0.5L7 4L10.5 5.5L7 7L5.5 10.5L4 7L0.5 5.5L4 4Z" fill="#d4af37" />
-          </svg>
-          <div className="h-px w-12 sm:w-20" style={{ background: "linear-gradient(to left, transparent, #d4af37bb)" }} />
-        </div>
-
-        {/* Logo — scales + fades in */}
-        <div
-          className="relative mb-4"
-          style={{
-            width: "clamp(52px, 6vw, 76px)",
-            height: "clamp(52px, 6vw, 76px)",
-            opacity: entered ? 1 : 0,
-            transform: entered ? "scale(1) translateY(0)" : "scale(0.88) translateY(8px)",
-            transition: "opacity 0.85s ease 0.25s, transform 0.85s cubic-bezier(0.34,1.3,0.64,1) 0.25s",
-          }}
-        >
+      {/* ── LEFT CURTAIN PANEL ── full saree visible */}
+      <motion.div
+        className="absolute inset-y-0 left-0 w-1/2 overflow-hidden"
+        animate={{ x: isOpen ? "-100%" : "0%" }}
+        transition={{ duration: 1.35, ease: [0.87, 0, 0.13, 1] }}
+        style={{ willChange: "transform" }}
+      >
+        {/* Saree image — fully visible, left half of image */}
+        <div className="absolute inset-0">
           <Image
-            src="/images/logo.webp"
-            alt="Silk Karagiri"
+            src="/images/sarre1.webp"
+            alt=""
             fill
             priority
-            sizes="76px"
-            className="object-contain drop-shadow-2xl"
+            sizes="50vw"
+            className="object-cover"
+            style={{ objectPosition: "60% center" }}
           />
         </div>
 
-        {/* Brand name — with gold shimmer sweep effect */}
+        {/* Subtle dark vignette only on right (inner) edge — creates fold depth */}
         <div
-          className="relative overflow-hidden mb-2"
+          className="absolute inset-y-0 right-0 w-32 pointer-events-none"
           style={{
-            opacity: entered ? 1 : 0,
-            transform: entered ? "translateY(0)" : "translateY(14px)",
-            transition: "opacity 0.85s ease 0.35s, transform 0.85s ease 0.35s",
+            background:
+              "linear-gradient(to right, transparent, rgba(0,0,0,0.65))",
           }}
-        >
-          <h1
-            className="font-heading-main text-[#fbf7ed] font-bold uppercase"
-            style={{
-              fontSize: "clamp(1.9rem, 5.5vw, 4rem)",
-              letterSpacing: "0.28em",
-              textShadow: "0 2px 40px rgba(0,0,0,0.6)",
-            }}
+        />
+        {/* Left outer edge vignette */}
+        <div
+          className="absolute inset-y-0 left-0 w-10 pointer-events-none"
+          style={{
+            background: "linear-gradient(to right, rgba(0,0,0,0.35), transparent)",
+          }}
+        />
+        {/* Top and bottom vignettes */}
+        <div
+          className="absolute inset-x-0 top-0 h-20 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent)",
+          }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-20 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
+          }}
+        />
+        {/* Subtle gold vertical thread shimmer lines — zari motif */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, transparent 0px, transparent 28px, rgba(212,175,55,0.06) 28px, rgba(212,175,55,0.06) 29px)",
+          }}
+        />
+      </motion.div>
+
+      {/* ── RIGHT CURTAIN PANEL ── full saree visible */}
+      <motion.div
+        className="absolute inset-y-0 right-0 w-1/2 overflow-hidden"
+        animate={{ x: isOpen ? "100%" : "0%" }}
+        transition={{ duration: 1.35, ease: [0.87, 0, 0.13, 1] }}
+        style={{ willChange: "transform" }}
+      >
+        <div className="absolute inset-0">
+          <Image
+            src="/images/sarre1.webp"
+            alt=""
+            fill
+            priority
+            sizes="50vw"
+            className="object-cover"
+            style={{ objectPosition: "40% center" }}
+          />
+        </div>
+
+        {/* Inner fold depth on left edge */}
+        <div
+          className="absolute inset-y-0 left-0 w-32 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to left, transparent, rgba(0,0,0,0.65))",
+          }}
+        />
+        {/* Right outer vignette */}
+        <div
+          className="absolute inset-y-0 right-0 w-10 pointer-events-none"
+          style={{
+            background: "linear-gradient(to left, rgba(0,0,0,0.35), transparent)",
+          }}
+        />
+        <div
+          className="absolute inset-x-0 top-0 h-20 pointer-events-none"
+          style={{
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.4), transparent)",
+          }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-20 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, transparent 0px, transparent 28px, rgba(212,175,55,0.06) 28px, rgba(212,175,55,0.06) 29px)",
+          }}
+        />
+      </motion.div>
+
+      {/* ── GOLD CENTRE SEAM ── the split between both curtain panels */}
+      <motion.div
+        className="absolute inset-y-0 pointer-events-none"
+        style={{ left: "calc(50% - 1px)", width: "2px" }}
+        animate={{ opacity: isOpen ? 0 : 1 }}
+        transition={{ duration: 0.25 }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent 0%, rgba(212,175,55,0.7) 10%, #d4af37 50%, rgba(212,175,55,0.7) 90%, transparent 100%)",
+            boxShadow: "0 0 20px 6px rgba(212,175,55,0.3)",
+          }}
+        />
+      </motion.div>
+
+      {/* ── BRAND IDENTITY — dark pill behind text for legibility ── */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.div
+            key="brand"
+            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 14 }}
+            exit={{ opacity: 0, y: -10, transition: { duration: 0.35 } }}
+            transition={{ duration: 0.65, ease: "easeOut" }}
           >
-            Silk Karagiri
-          </h1>
-          {/* Gold shimmer sweep — slides across the text once */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: "linear-gradient(105deg, transparent 30%, rgba(212,175,55,0.55) 50%, transparent 70%)",
-              transform: shimming ? "translateX(120%)" : "translateX(-120%)",
-              transition: shimming
-                ? "transform 0.85s cubic-bezier(0.4,0,0.2,1)"
-                : "none",
-            }}
-          />
-        </div>
+            {/* Dark backdrop pill — only behind content, not full screen */}
+            <div
+              className="relative flex flex-col items-center px-10 sm:px-14 py-8 sm:py-10 rounded-3xl"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(15,3,3,0.88) 0%, rgba(15,3,3,0.75) 60%, transparent 100%)",
+                backdropFilter: "blur(2px)",
+                WebkitBackdropFilter: "blur(2px)",
+              }}
+            >
+              {/* Top gold rule */}
+              <div className="flex items-center gap-3 mb-5">
+                <div
+                  className="h-px"
+                  style={{
+                    width: "clamp(36px, 7vw, 90px)",
+                    background: "linear-gradient(to right, transparent, #d4af37)",
+                  }}
+                />
+                <svg width="8" height="8" viewBox="0 0 8 8">
+                  <rect x="4" y="0" width="4" height="4" rx="0.5" transform="rotate(45 4 0)" fill="#d4af37" />
+                </svg>
+                <div
+                  className="h-px"
+                  style={{
+                    width: "clamp(36px, 7vw, 90px)",
+                    background: "linear-gradient(to left, transparent, #d4af37)",
+                  }}
+                />
+              </div>
 
-        {/* Divider line below name */}
-        <div
-          className="flex items-center gap-3 my-3"
-          style={{
-            opacity: entered ? 1 : 0,
-            transition: "opacity 0.8s ease 0.5s",
-          }}
-        >
-          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, transparent, #d4af3777)" }} />
-          <svg width="7" height="7" viewBox="0 0 7 7" fill="none">
-            <circle cx="3.5" cy="3.5" r="1.5" fill="#d4af37" opacity="0.9" />
-          </svg>
-          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, transparent, #d4af3777)" }} />
-        </div>
+              {/* Logo */}
+              <motion.div
+                className="relative mb-4"
+                style={{ width: "clamp(52px, 6vw, 76px)", height: "clamp(52px, 6vw, 76px)" }}
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+              >
+                <Image
+                  src="/images/logo.webp"
+                  alt="Silk Karagiri"
+                  fill
+                  priority
+                  sizes="76px"
+                  className="object-contain"
+                />
+              </motion.div>
 
-        {/* Tagline */}
-        <p
-          className="font-ui text-[#d4af37]/80 uppercase"
-          style={{
-            fontSize: "clamp(8.5px, 1.1vw, 11.5px)",
-            letterSpacing: "0.42em",
-            opacity: entered ? 1 : 0,
-            transform: entered ? "translateY(0)" : "translateY(8px)",
-            transition: "opacity 0.8s ease 0.6s, transform 0.8s ease 0.6s",
-          }}
-        >
-          Timeless Tradition &nbsp;&middot;&nbsp; Exceptional Elegance
-        </p>
+              {/* Brand name */}
+              <h1
+                className="font-heading-main font-bold uppercase"
+                style={{
+                  fontSize: "clamp(26px, 4vw, 54px)",
+                  color: "#fbf7ed",
+                  letterSpacing: "0.22em",
+                  textShadow: "0 2px 24px rgba(0,0,0,0.8)",
+                }}
+              >
+                Silk Karagiri
+              </h1>
 
-        {/* Bottom ornament */}
-        <div
-          className="flex items-center gap-3 mt-5"
-          style={{
-            opacity: entered ? 1 : 0,
-            transform: entered ? "translateY(0)" : "translateY(10px)",
-            transition: "opacity 0.9s ease 0.7s, transform 0.9s ease 0.7s",
-          }}
-        >
-          <div className="h-px w-12 sm:w-20" style={{ background: "linear-gradient(to right, transparent, #d4af37bb)" }} />
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-            <path d="M5.5 0.5L7 4L10.5 5.5L7 7L5.5 10.5L4 7L0.5 5.5L4 4Z" fill="#d4af37" />
-          </svg>
-          <div className="h-px w-12 sm:w-20" style={{ background: "linear-gradient(to left, transparent, #d4af37bb)" }} />
-        </div>
-      </div>
+              {/* Three-dot gold separator */}
+              <div className="flex items-center gap-2 my-3">
+                <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, transparent, rgba(212,175,55,0.7))" }} />
+                <svg width="18" height="5" viewBox="0 0 18 5">
+                  <circle cx="2.5" cy="2.5" r="1.8" fill="#d4af37" opacity="0.7" />
+                  <circle cx="9"   cy="2.5" r="2.2" fill="#d4af37" />
+                  <circle cx="15.5" cy="2.5" r="1.8" fill="#d4af37" opacity="0.7" />
+                </svg>
+                <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, transparent, rgba(212,175,55,0.7))" }} />
+              </div>
+
+              {/* Tagline */}
+              <p
+                className="font-ui uppercase"
+                style={{
+                  fontSize: "clamp(9px, 1vw, 12px)",
+                  color: "rgba(212,175,55,0.9)",
+                  letterSpacing: "0.34em",
+                }}
+              >
+                Timeless Tradition &nbsp;·&nbsp; Exceptional Elegance
+              </p>
+
+              {/* Bottom gold rule */}
+              <div className="flex items-center gap-3 mt-5">
+                <div
+                  className="h-px"
+                  style={{
+                    width: "clamp(36px, 7vw, 90px)",
+                    background: "linear-gradient(to right, transparent, #d4af37)",
+                  }}
+                />
+                <svg width="8" height="8" viewBox="0 0 8 8">
+                  <rect x="4" y="0" width="4" height="4" rx="0.5" transform="rotate(45 4 0)" fill="#d4af37" />
+                </svg>
+                <div
+                  className="h-px"
+                  style={{
+                    width: "clamp(36px, 7vw, 90px)",
+                    background: "linear-gradient(to left, transparent, #d4af37)",
+                  }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
