@@ -196,7 +196,7 @@ export function Navbar() {
                 </div>
                 <div>
                   <a
-                    href="#contact"
+                    href="/contact"
                     className="block py-2 text-ink-black hover:text-dark-teal"
                   >
                     Artisan &amp; Contact
@@ -323,7 +323,7 @@ export function Navbar() {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <a
-                    href="#contact"
+                    href="/contact"
                     className="inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest text-ink-black hover:text-dark-teal transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer"
                   >
                     Contact

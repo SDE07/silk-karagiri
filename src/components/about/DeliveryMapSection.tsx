@@ -136,7 +136,7 @@ export function DeliveryMapSection() {
 
           <Link
             data-reveal
-            href="/#contact"
+            href="/contact"
             className="inline-flex items-center gap-1.5 font-ui text-xs font-bold uppercase tracking-wider text-dark-teal hover:text-[#9f2d55] transition-colors"
           >
             Enquire about overseas orders

@@ -56,7 +56,7 @@ export default function AboutPage() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link
-                href="/#contact"
+                href="/contact"
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-vanilla-custard/40 hover:border-vanilla-custard text-vanilla-custard font-ui text-xs uppercase tracking-widest font-bold transition-colors"
               >
                 Contact Us

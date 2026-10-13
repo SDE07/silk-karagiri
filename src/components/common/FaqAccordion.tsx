@@ -233,7 +233,7 @@ export function Faq({
                   <ArrowRight className="w-3 h-3" />
                 </a>
                 <a
-                  href="#contact"
+                  href="/contact"
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-stone-300 bg-white/60 text-stone-700 hover:border-[#9f2d55] hover:text-[#9f2d55] text-[11px] font-medium transition-colors"
                 >
                   <span>Book Video Call</span>

@@ -170,7 +170,7 @@ export function Footer() {
               <ul className="space-y-2 font-body text-sm sm:text-[15px]">
                 <li>
                   <Link
-                    href="/#contact"
+                    href="/contact"
                     className="text-ink-black/85 hover:text-[#004e5e] font-medium transition-colors leading-relaxed block hover:translate-x-0.5 transform duration-150"
                   >
                     Contact Us
