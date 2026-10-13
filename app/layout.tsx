@@ -12,6 +12,7 @@ import {
   Marcellus,
   EB_Garamond,
   Montserrat,
+  Tiro_Devanagari_Marathi,
 } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,15 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700"],
 });
 
+// 5. Marathi lines (Devanagari): Tiro Devanagari Marathi
+const tiroMarathi = Tiro_Devanagari_Marathi({
+  subsets: ["devanagari", "latin"],
+  variable: "--font-marathi",
+  display: "swap",
+  weight: "400",
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
   title: `${APP_CONFIG.name} — ${APP_CONFIG.tagline}`,
   description:
@@ -73,7 +83,8 @@ export default function RootLayout({
         cormorant.variable,
         marcellus.variable,
         ebGaramond.variable,
-        montserrat.variable
+        montserrat.variable,
+        tiroMarathi.variable
       )}
     >
       <body

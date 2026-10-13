@@ -126,7 +126,7 @@ export function Footer() {
               <ul className="space-y-2 font-body text-sm sm:text-[15px]">
                 <li>
                   <Link
-                    href="/#story"
+                    href="/about"
                     className="text-ink-black/85 hover:text-[#004e5e] font-medium transition-colors leading-relaxed block hover:translate-x-0.5 transform duration-150"
                   >
                     Our Story
@@ -134,7 +134,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/#craftsmanship"
+                    href="/about#story"
                     className="text-ink-black/85 hover:text-[#004e5e] font-medium transition-colors leading-relaxed block hover:translate-x-0.5 transform duration-150"
                   >
                     Craftsmanship
@@ -142,7 +142,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/#weavers"
+                    href="/about#weavers"
                     className="text-ink-black/85 hover:text-[#004e5e] font-medium transition-colors leading-relaxed block hover:translate-x-0.5 transform duration-150"
                   >
                     Weaving Centres

@@ -187,12 +187,12 @@ export function Navbar() {
                   </Link>
                 </div>
                 <div>
-                  <a
-                    href="#about"
+                  <Link
+                    href="/about"
                     className="block py-2 text-ink-black hover:text-dark-teal border-b border-golden-orange/15"
                   >
                     About Heritage
-                  </a>
+                  </Link>
                 </div>
                 <div>
                   <a
@@ -310,12 +310,12 @@ export function Navbar() {
               {/* About Link */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <a
-                    href="#about"
+                  <Link
+                    href="/about"
                     className="inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest text-ink-black hover:text-dark-teal transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer"
                   >
                     About
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
 

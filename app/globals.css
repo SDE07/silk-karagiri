@@ -9,6 +9,7 @@
   --font-heading-sub: var(--font-heading-sub), "Marcellus", Georgia, serif;
   --font-body: var(--font-body), "EB Garamond", Garamond, serif;
   --font-ui: var(--font-ui), "Montserrat", sans-serif;
+  --font-marathi: var(--font-marathi), "Tiro Devanagari Marathi", "Noto Serif Devanagari", serif;
 
   /* 1. Core Foundation: Background & Canvases */
   --color-vanilla-custard: #fbf7ed;
