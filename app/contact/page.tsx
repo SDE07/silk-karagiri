@@ -38,10 +38,6 @@ export default function ContactPage() {
         <h1 className="font-heading-sub text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-tight">
           <span className="text-[#064e3b]">Contact</span> <span className="text-[#9f2d55]">Us</span>
         </h1>
-        <p className="mx-auto max-w-xl font-body text-base sm:text-lg leading-relaxed text-ink-black-300/85">
-          Looking for the perfect wedding saree, checking on an order, or planning something custom? Write to us —
-          a real person from our team will help you choose.
-        </p>
       </header>
 
       <div className="mx-auto mt-14 sm:mt-20 grid max-w-[1280px] grid-cols-1 gap-12 px-5 sm:px-10 lg:grid-cols-12 lg:gap-16 lg:px-16">
