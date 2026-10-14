@@ -54,6 +54,8 @@ const tiroMarathi = Tiro_Devanagari_Marathi({
   variable: "--font-marathi",
   display: "swap",
   weight: "400",
+  // Only the About page's Marathi quote uses it — don't preload it on every page.
+  preload: false,
   style: ["normal", "italic"],
 });
 

@@ -1,13 +1,10 @@
 import React from "react";
 import { FaqAccordion } from "@/components/common/FaqAccordion";
-import { LoomCalendarSection } from "@/components/home/LoomCalendarSection";
 import { HeroBannerSlider } from "@/components/home/HeroBannerSlider";
 import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel";
 import { SareeHeritageShowcase } from "@/components/home/SareeHeritageShowcase";
 import { KaragiriHeritageBanner } from "@/components/home/KaragiriHeritageBanner";
-import ThreeDHoverGallery from "@/components/lightswind/3d-hover-gallery";
-import { SilkKaragiriBanner } from "@/components/about/SilkKaragiriBanner";
-import Link from "next/link";
+import { LazyHoverGallery, LazySareeAtelier } from "@/components/home/LazyHomeSections";
 
 export default function HomePage() {
   return (
@@ -28,6 +25,9 @@ export default function HomePage() {
       {/* Royal Silk Karagiri Campaign Banner (Timeless Tradition, Exceptional Elegance) */}
       <KaragiriHeritageBanner />
 
+      {/* The Saree Atelier — pick a collection, the stage changes look (replaces the About teaser) */}
+      <LazySareeAtelier />
+
       {/* 3D Hover Gallery Showcase - Silk Karagiri Vault */}
       <section className="relative w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-6 sm:py-10">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 space-y-2.5">
@@ -45,44 +45,8 @@ export default function HomePage() {
           </p>
         </div>
 
-        <ThreeDHoverGallery
-          images={[
-            "/images/scrollerimg/img1.png",
-            "/images/scrollerimg/img2.png",
-            "/images/scrollerimg/img3.png",
-            "/images/scrollerimg/img4.png",
-            "/images/scrollerimg/img5.png",
-            "/images/scrollerimg/img6.png",
-            "/images/scrollerimg/img7.png",
-          ]}
-          autoPlay={true}
-          autoPlayDelay={4200}
-          itemHeight={490}
-          perspective={1400}
-          hoverScale={1.05}
-          transitionDuration={0.65}
-        />
+        <LazyHoverGallery />
       </section>
-
-      {/* About Section — starts with the layered Silk Karagiri Sarees banner */}
-      <section id="about" className="scroll-mt-28 w-full space-y-8">
-        <SilkKaragiriBanner />
-        <div className="max-w-2xl mx-auto px-4 text-center space-y-4">
-          <p className="font-body text-base sm:text-lg leading-relaxed text-ink-black-300/90">
-            Silk Karagiri brings pure handloom silk sarees straight from master weavers in Kanchipuram, Banaras,
-            Yeola, Coimbatore and beyond — honest silk, authentic zari, and no middlemen.
-          </p>
-          <Link
-            href="/about"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-dark-teal hover:bg-[#9f2d55] text-vanilla-custard font-ui text-xs uppercase tracking-widest font-bold shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            Read Our Story →
-          </Link>
-        </div>
-      </section>
-
-      {/* A Year at the Looms — heat map that rises into a 3D skyline */}
-      <LoomCalendarSection />
 
       {/* Authenticity & Care FAQ Accordion */}
       <FaqAccordion />

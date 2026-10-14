@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,11 @@ interface SilkKaragiriBannerProps {
   headingLevel?: "h1" | "h2";
   className?: string;
 }
+
+/* Turntable sway: one full left-right cycle every 6s, each model offset so they never move in lockstep. */
+const TURN_ANGLE = 16;
+const TURN_STAGGER = 0.9;
+const TURN = { duration: 6, ease: "easeInOut", repeat: Infinity } as const;
 
 /* One mannequin layer — sits above the floral art, rises in on scroll and lifts on hover. */
 function SareeLayer({
@@ -25,6 +30,8 @@ function SareeLayer({
   sizes: string;
 }) {
   const reduce = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+  const turning = !reduce && !hovered;
 
   return (
     <motion.div
@@ -33,20 +40,31 @@ function SareeLayer({
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.8, delay: 0.12 * index, ease: [0.22, 1, 0.36, 1] }}
       whileHover={reduce ? undefined : { y: -8, scale: 1.035 }}
-      className={cn("group relative z-10 min-w-0", className)}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      className={cn("group relative z-10 min-w-0 [perspective:900px]", className)}
     >
-      {/* Soft ground shadow so each model reads as a separate layer */}
-      <span
+      {/* Soft ground shadow — narrows as the drape turns away, like a real turntable */}
+      <motion.span
         aria-hidden
-        className="absolute bottom-[1%] left-1/2 h-[5%] w-[70%] -translate-x-1/2 rounded-[50%] bg-[#5a3a1e]/25 blur-[6px] transition-all duration-500 group-hover:w-[60%] group-hover:bg-[#5a3a1e]/15"
+        animate={turning ? { scaleX: [1, 0.86, 1, 0.86, 1] } : { scaleX: 1 }}
+        transition={turning ? { ...TURN, delay: -index * TURN_STAGGER } : { duration: 0.5 }}
+        className="absolute bottom-[1%] left-[15%] h-[5%] w-[70%] rounded-[50%] bg-[#5a3a1e]/25 blur-[6px] transition-colors duration-500 group-hover:bg-[#5a3a1e]/15"
       />
-      <Image
-        src={model.src}
-        alt={model.alt}
-        fill
-        sizes={sizes}
-        className="object-contain object-bottom drop-shadow-[0_10px_14px_rgba(70,40,15,0.22)]"
-      />
+      {/* Mannequin — sways ±TURN_ANGLE° around its vertical axis, settles front-on when hovered */}
+      <motion.div
+        animate={turning ? { rotateY: [0, TURN_ANGLE, 0, -TURN_ANGLE, 0] } : { rotateY: 0 }}
+        transition={turning ? { ...TURN, delay: -index * TURN_STAGGER } : { duration: 0.5, ease: "easeOut" }}
+        className="absolute inset-0 origin-bottom will-change-transform"
+      >
+        <Image
+          src={model.src}
+          alt={model.alt}
+          fill
+          sizes={sizes}
+          className="object-contain object-bottom drop-shadow-[0_10px_14px_rgba(70,40,15,0.22)]"
+        />
+      </motion.div>
     </motion.div>
   );
 }

@@ -268,10 +268,10 @@ export function HeroBannerSlider() {
                     src={slide.image}
                     alt={slide.alt}
                     fill
-                    priority={index <= 2 || index === EXTENDED_SLIDES.length - 1}
+                    // Slide 1 is the LCP image; the rest lazy-load as the slider nears them.
+                    priority={index === 1}
                     sizes="100vw"
-                    quality={95}
-                    unoptimized
+                    quality={90}
                     className="object-cover object-center transform transition-transform duration-1000 group-hover:scale-102"
                   />
 

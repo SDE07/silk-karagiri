@@ -6,10 +6,61 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { WeavingCentresStrip } from "@/components/about/WeavingCentresStrip";
-import { ArrowRight, BadgeCheck, HandHeart, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+}
+
+/* Official Handloom Mark India hallmark */
+function HandloomMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 236 262" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M236,155.12a28,28,0,0,0-14.12-24.29L101.68,62.32a18.19,18.19,0,0,1-9.16-15.79V.12q-5,1-9.76,2.3V46.53a27.93,27.93,0,0,0,14.1,24.3l120.2,68.5a18.22,18.22,0,0,1,9.16,15.83v52.61A132.47,132.47,0,0,0,236,191.94Z" />
+      <path d="M193.51,147.5,74.1,79.06a18.2,18.2,0,0,1-9.17-15.79V8.78q-5,2.19-9.76,4.77V63.23A28,28,0,0,0,69.27,87.5L188.68,156a18.19,18.19,0,0,1,9.17,15.78v65q5.06-3.79,9.75-8.06v-57A28,28,0,0,0,193.51,147.5Z" />
+      <path d="M166,163.47,46.52,95.72a18.18,18.18,0,0,1-9.17-15.79V25.15q-5.07,3.92-9.76,8.33V80a28,28,0,0,0,14.17,24.27L161.26,172a18.17,18.17,0,0,1,9.17,15.78V252.6c3.33-1.42,6.58-3,9.75-4.65V187.78A28,28,0,0,0,166,163.47Z" />
+      <path d="M138.41,179.91,18.62,108.61A18.25,18.25,0,0,1,9.76,93V53.91A132.28,132.28,0,0,0,0,70V93a28,28,0,0,0,13.64,24l119.83,71.35.09,0a18.18,18.18,0,0,1,9.16,15.83V261q5-.93,9.75-2.2V204.16A27.93,27.93,0,0,0,138.41,179.91Z" />
+      <path d="M18.94,139.33l120.19-68.5a28,28,0,0,0,14.12-24.3V2.26Q148.44.94,143.49,0V46.53a18.22,18.22,0,0,1-9.17,15.84L14.12,130.83A28,28,0,0,0,0,155.12v35.62a133.53,133.53,0,0,0,9.76,16.13V155.12A18.19,18.19,0,0,1,18.94,139.33Z" />
+      <path d="M47.33,155.92,166.71,87.5a28,28,0,0,0,14.12-24.27v-50q-4.77-2.55-9.76-4.71V63.23a18.19,18.19,0,0,1-9.16,15.84L42.5,147.45a28,28,0,0,0-14.17,24.26v56.36q4.68,4.31,9.75,8.16V171.71A18.2,18.2,0,0,1,47.33,155.92Z" />
+      <path d="M74.77,172,194.3,104.17a28,28,0,0,0,14.11-24.26v-47c-3.11-2.89-6.37-5.62-9.75-8.2V79.93a18.22,18.22,0,0,1-9.17,15.79L70,163.47a28,28,0,0,0-14.12,24.27v59.84q4.76,2.55,9.75,4.71V187.74A18.2,18.2,0,0,1,74.77,172Z" />
+      <path d="M102.44,188.33,222.36,117A28.06,28.06,0,0,0,236,93V68.83A132.47,132.47,0,0,0,226.24,53V93a18.26,18.26,0,0,1-8.87,15.61L97.58,179.91a27.94,27.94,0,0,0-14.07,24.25v54.41q4.8,1.31,9.75,2.24V204.16A18.18,18.18,0,0,1,102.44,188.33Z" />
+    </svg>
+  );
+}
+
+/* Master Weaver / Karigar loom shuttle emblem */
+function KarigarIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M2.5 12c4-4.5 15-4.5 19 0-4 4.5-15 4.5-19 0z" />
+      <ellipse cx="12" cy="12" rx="3.2" ry="1.6" fill="currentColor" fillOpacity="0.25" />
+      <path d="M9 12h6" strokeWidth="2" />
+      <path d="M7 5.5v-2M12 4.5v-2M17 5.5v-2M7 18.5v2M12 19.5v2M17 18.5v2" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+/* Official Silk Mark India butterfly hallmark */
+function SilkMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path
+        d="M10.8 5C9.5 3.3 8 2.8 6.5 3M13.2 5c1.3-1.7 2.8-2.2 4.3-2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
+      <circle cx="12" cy="5.8" r="1.1" />
+      <path d="M11.3 7.4h1.4c.3 2.2.3 5.8 0 7.8h-1.4c-.3-2-.3-5.6 0-7.8z" />
+      <path d="M11 7.6C8.5 7.4 5.2 8.5 3 11.2c2 1.4 4.8 1.6 7.4.2-.2-1.2-.4-2.4.6-3.8z" />
+      <path d="M10.8 10.6c-2.6.2-5.2 1.6-6.6 4.3 2.2.8 4.8.2 6.6-2.2z" />
+      <path d="M11 13.3c-2 .6-3.8 2.2-4.2 4.8 1.8.4 3.6-.6 4.4-3.2z" />
+      <path d="M13 7.6c2.5-.2 5.8.9 8 3.6-2 1.4-4.8 1.6-7.4.2.2-1.2.4-2.4-.6-3.8z" />
+      <path d="M13.2 10.6c2.6.2 5.2 1.6 6.6 4.3-2.2.8-4.8.2-6.6-2.2z" />
+      <path d="M13 13.3c2 .6 3.8 2.2 4.2 4.8-1.8.4-3.6-.6-4.4-3.2z" />
+    </svg>
+  );
 }
 
 const HEADING = [
@@ -18,9 +69,9 @@ const HEADING = [
 ];
 
 const HIGHLIGHTS = [
-  { icon: Sparkles, label: "Pure Handloom" },
-  { icon: HandHeart, label: "Direct from Karigars" },
-  { icon: BadgeCheck, label: "Silk Mark Assured" },
+  { icon: HandloomMarkIcon, label: "Pure Handloom" },
+  { icon: KarigarIcon, label: "Direct from Karigars" },
+  { icon: SilkMarkIcon, label: "Silk Mark Assured" },
 ];
 
 /**
@@ -154,7 +205,7 @@ export function WeaverStorySection() {
               {/* The weaver — sits above the arch, head breaking out of the frame */}
               <div data-weaver className="absolute inset-x-0 bottom-[3%] top-0 [transform:translateZ(40px)]">
                 <Image
-                  src="/images/about/karagir.png"
+                  src="/images/about/karagir.webp"
                   alt="A master weaver presenting a handwoven maroon and royal blue silk saree with gold zari border"
                   fill
                   sizes="(max-width: 640px) 340px, 440px"
@@ -227,7 +278,7 @@ export function WeaverStorySection() {
                   data-chip
                   className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 font-ui text-[11px] font-semibold text-ink-black shadow-xs ring-1 ring-golden-orange/20"
                 >
-                  <Icon className="h-3.5 w-3.5 text-golden-orange" />
+                  <Icon className="h-4 w-4 text-golden-orange shrink-0" />
                   {label}
                 </li>
               ))}

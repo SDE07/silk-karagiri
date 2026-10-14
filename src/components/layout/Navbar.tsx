@@ -50,6 +50,20 @@ export function Navbar() {
   }, []);
 
   const shouldBeSolid = !isHome || isScrolled;
+  // Over the dark hero photo the bar is transparent, so its text and icons switch to light.
+  const onHero = !shouldBeSolid;
+  const fg = onHero ? "text-vanilla-custard" : "text-ink-black";
+  const fgHover = onHero ? "hover:text-golden-orange" : "hover:text-dark-teal";
+  const navLink = cn(
+    "inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer",
+    fg,
+    fgHover
+  );
+  const iconButton = cn(
+    "relative p-2.5 rounded-md transition-colors cursor-pointer border border-transparent hover:border-golden-orange/30",
+    fg,
+    onHero ? "hover:bg-white/10" : "hover:bg-vanilla-custard-800"
+  );
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +105,7 @@ export function Navbar() {
         "sticky top-0 z-40 w-full transition-all duration-500 ease-in-out",
         shouldBeSolid
           ? "border-b border-golden-orange/15 bg-vanilla-custard-900/95 backdrop-blur-md shadow-2xs"
-          : "border-b border-transparent bg-transparent shadow-none"
+          : "border-b border-transparent bg-gradient-to-b from-black/55 via-black/25 to-transparent shadow-none"
       )}
     >
       <div className="w-full px-6 sm:px-6 md:px-10 lg:px-12 xl:px-12 h-20 flex items-center justify-between gap-4">
@@ -101,7 +115,7 @@ export function Navbar() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                className="group size-9 lg:hidden p-0 text-ink-black hover:bg-vanilla-custard-800"
+                className={cn("group size-9 lg:hidden p-0", fg, onHero ? "hover:bg-white/10" : "hover:bg-vanilla-custard-800")}
                 variant="ghost"
                 size="icon"
                 aria-label="Toggle navigation menu"
@@ -143,7 +157,7 @@ export function Navbar() {
                   placeholder="Search pure silk drapes…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-10 h-10 text-xs rounded-md border-0 bg-vanilla-custard-800/80 font-ui placeholder:text-ink-black-300/50 focus:bg-white focus-visible:ring-1 focus-visible:ring-dark-teal/40"
+                  className="pr-10 h-10 text-base sm:text-xs rounded-md border-0 bg-vanilla-custard-800/80 font-ui placeholder:text-ink-black-300/50 focus:bg-white focus-visible:ring-1 focus-visible:ring-dark-teal/40"
                 />
                 <button
                   type="submit"
@@ -195,12 +209,12 @@ export function Navbar() {
                   </Link>
                 </div>
                 <div>
-                  <a
+                  <Link
                     href="/contact"
                     className="block py-2 text-ink-black hover:text-dark-teal"
                   >
                     Artisan &amp; Contact
-                  </a>
+                  </Link>
                 </div>
               </nav>
 
@@ -217,7 +231,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="relative h-14 sm:h-16 w-auto flex items-center justify-center shrink-0">
               <Image
-                src="/images/logo.png"
+                src="/images/logo.webp"
                 alt={APP_CONFIG.name}
                 width={180}
                 height={180}
@@ -226,7 +240,7 @@ export function Navbar() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-heading-main text-lg sm:text-xl font-bold tracking-tight text-ink-black group-hover:text-dark-teal transition-colors leading-tight">
+              <span className={cn("font-heading-main text-lg sm:text-xl font-bold tracking-tight transition-colors leading-tight", fg, onHero ? "group-hover:text-golden-orange" : "group-hover:text-dark-teal")}>
                 {APP_CONFIG.name}
               </span>
               <span className="font-ui text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-dark-teal-400 font-semibold">
@@ -245,7 +259,7 @@ export function Navbar() {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/"
-                    className="inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest text-ink-black hover:text-dark-teal transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer"
+                    className={navLink}
                   >
                     Home
                   </Link>
@@ -254,7 +268,7 @@ export function Navbar() {
 
               {/* Products Dropdown */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest text-ink-black hover:text-dark-teal transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 bg-transparent leading-none cursor-pointer">
+                <NavigationMenuTrigger className={cn(navLink, "bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent")}>
                   Products
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -312,7 +326,7 @@ export function Navbar() {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/about"
-                    className="inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest text-ink-black hover:text-dark-teal transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer"
+                    className={navLink}
                   >
                     About
                   </Link>
@@ -322,12 +336,12 @@ export function Navbar() {
               {/* Contact Link */}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <a
+                  <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest text-ink-black hover:text-dark-teal transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer"
+                    className={navLink}
                   >
                     Contact
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -361,11 +375,11 @@ export function Navbar() {
           {/* Wishlist Button: Elegant Bookmark Icon */}
           <button
             onClick={() => setWishlistCount((prev) => prev + 1)}
-            className="relative p-2.5 rounded-md hover:bg-vanilla-custard-800 text-ink-black transition-colors cursor-pointer border border-transparent hover:border-golden-orange/30"
+            className={iconButton}
             aria-label="Wishlist"
             title="Saved Silk Creations"
           >
-            <Bookmark className="w-5 h-5 text-ink-black hover:text-dark-teal transition-colors" />
+            <Bookmark className={cn("w-5 h-5 transition-colors", fgHover)} />
             {wishlistCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-golden-orange text-ink-black rounded-full font-ui text-[9px] font-bold flex items-center justify-center shadow-xs border border-vanilla-custard-900">
                 {wishlistCount}
@@ -376,11 +390,11 @@ export function Navbar() {
           {/* Shopping Cart Button */}
           <button
             onClick={openCart}
-            className="relative p-2.5 rounded-md hover:bg-vanilla-custard-800 text-ink-black transition-colors cursor-pointer border border-transparent hover:border-golden-orange/30"
+            className={iconButton}
             aria-label="Open Shopping Bag"
             title="Open Shopping Bag"
           >
-            <ShoppingBag className="w-5 h-5 text-ink-black hover:text-dark-teal transition-colors" />
+            <ShoppingBag className={cn("w-5 h-5 transition-colors", fgHover)} />
             {totalItems > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brown-red text-vanilla-custard-900 rounded-full font-ui text-[9px] font-bold flex items-center justify-center shadow-md animate-in zoom-in border border-vanilla-custard-900">
                 {totalItems}

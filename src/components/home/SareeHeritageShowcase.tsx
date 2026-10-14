@@ -5,51 +5,16 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Crown, Gem, MapPin, Sparkles } from "lucide-react";
 import { WheelCarousel, type WheelCarouselItem } from "@/components/ui/wheel-carousel";
 import { AnimatedCopyButton } from "@/components/lightswind/animated-copy-button";
+import { KANCHI_SHOWCASE } from "@/data/showcase.data";
 
-const SAREE_WHEEL_ITEMS: WheelCarouselItem[] = [
-  {
-    label: "Kanchipuram Silk",
-    image: "/images/scrollerimg/img1.png",
-    imageAlt: "Kanchipuram Pure Silk Saree",
-    origin: "Kanchipuram Looms",
-    tagline: "Temple Korvai borders & 3-ply twisted silk with authentic gold zari",
-  },
-  {
-    label: "Soft Silk",
-    image: "/images/scrollerimg/img2.png",
-    imageAlt: "Soft Silk Saree",
-    origin: "Coimbatore & Arani",
-    tagline: "Featherweight elegance with effortless, breathable drape",
-  },
-  {
-    label: "Banaras Silk",
-    image: "/images/scrollerimg/img3.png",
-    imageAlt: "Banaras Silk Saree",
-    origin: "Varanasi Ghat Looms",
-    tagline: "Cutwork meenakari jaal & pure silver electrum brocades",
-  },
-  {
-    label: "Paithani Silk",
-    image: "/images/scrollerimg/img4.png",
-    imageAlt: "Paithani Silk Saree",
-    origin: "Yeola & Paithan",
-    tagline: "Regal peacock & muniya borders in vibrant jewel tones",
-  },
-  {
-    label: "Chanderi Silk",
-    image: "/images/scrollerimg/img5.png",
-    imageAlt: "Chanderi Silk Saree",
-    origin: "Madhya Pradesh Looms",
-    tagline: "Gossamer sheer texture with shimmering gold tissue motifs",
-  },
-  {
-    label: "Designer Saree’s",
-    image: "/images/scrollerimg/img6.png",
-    imageAlt: "Designer Saree",
-    origin: "Couture Atelier",
-    tagline: "Bespoke fusion drapes with intricate artisanal handwork",
-  },
-];
+// Labels come from what each image actually shows — see src/data/showcase.data.ts.
+const SAREE_WHEEL_ITEMS: WheelCarouselItem[] = KANCHI_SHOWCASE.map((saree) => ({
+  label: saree.name,
+  image: saree.image,
+  imageAlt: `${saree.name} silk saree`,
+  origin: "Kanchipuram Looms",
+  tagline: saree.description,
+}));
 
 export function SareeHeritageShowcase() {
   const [activeItem, setActiveItem] = useState<WheelCarouselItem>(SAREE_WHEEL_ITEMS[0]);
@@ -85,7 +50,7 @@ export function SareeHeritageShowcase() {
               contentWidth={980}
               autoPlay={true}
               autoPlayInterval={3500}
-              className="h-[460px] sm:h-[530px] lg:h-[590px] xl:h-[620px] w-full"
+              className="h-auto sm:h-[530px] lg:h-[590px] xl:h-[620px] w-full"
               onActiveChange={(item) => setActiveItem(item)}
             />
           </div>

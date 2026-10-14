@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { SHOWCASE_GALLERY_ITEMS } from "@/data/showcase.data";
 
 export interface GalleryItem {
   url: string;
@@ -39,64 +41,8 @@ export interface ThreeDHoverGalleryProps {
   onImageFocus?: (index: number, item: any) => void;
 }
 
-const DEFAULT_SAREE_ITEMS: GalleryItem[] = [
-  {
-    url: "/images/scrollerimg/img1.png",
-    title: "Kanchipuram Silk",
-    category: "Bridal Zari",
-    description: "Pure mulberry silk with authentic 24K gold zari temple borders handwoven in Tamil Nadu.",
-    glow: "rgba(212,175,55,0.45)",
-    href: "/products?category=Sarees&tag=kanchipuram"
-  },
-  {
-    url: "/images/scrollerimg/img2.png",
-    title: "Banarasi Katan",
-    category: "Royal Brocade",
-    description: "Intricate floral kadhwa jaal woven on heirloom pit looms by master artisans of Varanasi.",
-    glow: "rgba(159,45,85,0.45)",
-    href: "/products?category=Sarees&tag=banarasi"
-  },
-  {
-    url: "/images/scrollerimg/img3.png",
-    title: "Paithani Handloom",
-    category: "Maharashtra Heritage",
-    description: "Signature kaleidoscopic peacock pallu with oblique square borders in lustrous pure silk.",
-    glow: "rgba(0,78,94,0.45)",
-    href: "/products?category=Sarees&tag=paithani"
-  },
-  {
-    url: "/images/scrollerimg/img4.png",
-    title: "Chanderi Gossamer",
-    category: "Featherlight Weave",
-    description: "Delicate sheer silk-cotton blend detailed with shimmering zari bootis and royal motifs.",
-    glow: "rgba(212,175,55,0.45)",
-    href: "/products?category=Sarees&tag=chanderi"
-  },
-  {
-    url: "/images/scrollerimg/img5.png",
-    title: "Mysore Crepe Silk",
-    category: "Karnataka Royalty",
-    description: "Fluid natural crepe silk with understated solid borders and regal golden zari pallu.",
-    glow: "rgba(159,45,85,0.45)",
-    href: "/products?category=Sarees&tag=mysore"
-  },
-  {
-    url: "/images/scrollerimg/img6.png",
-    title: "Tussar Wild Silk",
-    category: "Organic Loom",
-    description: "Naturally textured golden wild silk drapes with hand-painted tribal and kantha work.",
-    glow: "rgba(197,138,42,0.45)",
-    href: "/products?category=Sarees&tag=tussar"
-  },
-  {
-    url: "/images/scrollerimg/img7.png",
-    title: "Soft Silk Festive",
-    category: "Contemporary Heirloom",
-    description: "Lightweight comfortable drapes designed with traditional soul for grand modern celebrations.",
-    glow: "rgba(0,78,94,0.45)",
-    href: "/products?category=Sarees&tag=soft-silk"
-  }
-];
+// Fallback items: the Kancheepuram campaign images, labelled by what they show (src/data/showcase.data.ts).
+const DEFAULT_SAREE_ITEMS: GalleryItem[] = SHOWCASE_GALLERY_ITEMS;
 
 export const ThreeDHoverGallery: React.FC<ThreeDHoverGalleryProps> = ({
   images,
@@ -334,12 +280,16 @@ export const ThreeDHoverGallery: React.FC<ThreeDHoverGalleryProps> = ({
                 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="absolute inset-0 w-full h-full"
-                style={{
-                  backgroundImage: `url(${item.url})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center 22%",
-                }}
-              />
+              >
+                <Image
+                  src={item.url}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 640px) 80vw, 560px"
+                  className="object-cover object-[center_22%]"
+                  draggable={false}
+                />
+              </motion.div>
 
               {/* Luxury Text Scrim Overlay */}
               <div

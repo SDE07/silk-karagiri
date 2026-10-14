@@ -7,6 +7,7 @@ import { SilkKaragiriBanner } from "@/components/about/SilkKaragiriBanner";
 import { WeaverStorySection } from "@/components/about/WeaverStorySection";
 import { DeliveryMapSection } from "@/components/about/DeliveryMapSection";
 import { OrderJourneySection } from "@/components/about/OrderJourneySection";
+import { LoomCalendarSection } from "@/components/about/LoomCalendarSection";
 import { APP_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -29,6 +30,9 @@ export default function AboutPage() {
 
       {/* How It Works — scroll-driven order tracker (replaces the Promise cards) */}
       <OrderJourneySection />
+
+      {/* A Year at the Looms — heat map that rises into a 3D skyline */}
+      <LoomCalendarSection />
 
       {/* Closing CTA */}
       <section className="w-full max-w-[1280px] mx-auto px-4 sm:px-8">

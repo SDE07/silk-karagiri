@@ -191,9 +191,16 @@ export function RotatingGlobe({
       ctx.globalAlpha = 1;
     };
 
+    // The globe turns slowly, so 30 fps looks identical and halves the redraw cost (every border is
+    // re-stroked each frame).
+    const FRAME_MS = 1000 / 30;
     const tick = (now: number) => {
       raf = 0;
-      const dt = Math.min(0.05, (now - last) / 1000);
+      if (now - last < FRAME_MS) {
+        if (visible && !reduce.matches && !disposed) raf = requestAnimationFrame(tick);
+        return;
+      }
+      const dt = Math.min(0.08, (now - last) / 1000);
       last = now;
       // Decreasing the centre longitude moves the surface left → right across the face.
       lambda0 -= speed * dt;

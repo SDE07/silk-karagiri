@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, {
   useState,
   useEffect,
@@ -56,13 +57,13 @@ export function useMediaQuery(
 
 // All assets from public/images/scrollerimg
 const SCROLLER_IMAGES = [
-  "/images/scrollerimg/img1.png",
-  "/images/scrollerimg/img2.png",
-  "/images/scrollerimg/img3.png",
-  "/images/scrollerimg/img4.png",
-  "/images/scrollerimg/img5.png",
-  "/images/scrollerimg/img6.png",
-  "/images/scrollerimg/img7.png",
+  "/images/scrollerimg/img1.webp",
+  "/images/scrollerimg/img2.webp",
+  "/images/scrollerimg/img3.webp",
+  "/images/scrollerimg/img4.webp",
+  "/images/scrollerimg/img5.webp",
+  "/images/scrollerimg/img6.webp",
+  "/images/scrollerimg/img7.webp",
 ];
 
 export interface ThreeDPhotoCarouselProps {
@@ -110,6 +111,23 @@ export function ThreeDPhotoCarousel({
     const container = containerRef.current;
     if (!container) return;
 
+    // Container width is cached (ResizeObserver) — reading it every frame forced a full layout
+    // per frame. The loop also stops while the carousel is off-screen.
+    let containerWidth = container.clientWidth;
+    let visible = true;
+    const ro = new ResizeObserver(([entry]) => {
+      containerWidth = entry.contentRect.width;
+    });
+    ro.observe(container);
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible && !animationFrameRef.current) {
+        lastTimeRef.current = 0;
+        animationFrameRef.current = requestAnimationFrame(tick);
+      }
+    });
+    io.observe(container);
+
     const baseItemCount = cards.length;
     // Estimated slot width (image width + gap)
     const slotWidth = 320;
@@ -128,10 +146,9 @@ export function ThreeDPhotoCarousel({
         }
       }
 
-      // Calculate screen geometry for the slight 3D curve
-      const containerRect = container.getBoundingClientRect();
-      const centerX = containerRect.width / 2;
-      const halfWidth = containerRect.width / 2;
+      // Screen geometry for the slight 3D curve
+      const centerX = containerWidth / 2;
+      const halfWidth = containerWidth / 2;
 
       // Position each item along the gentle curved arc
       itemRefs.current.forEach((el, index) => {
@@ -156,14 +173,17 @@ export function ThreeDPhotoCarousel({
         el.style.transform = `translate3d(${wrappedX}px, ${translateY}px, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
       });
 
-      animationFrameRef.current = requestAnimationFrame(tick);
+      animationFrameRef.current = visible ? requestAnimationFrame(tick) : 0;
     };
 
     animationFrameRef.current = requestAnimationFrame(tick);
 
     return () => {
+      ro.disconnect();
+      io.disconnect();
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = 0;
       }
     };
   }, [cards, items.length, speed, activeImg]);
@@ -207,9 +227,12 @@ export function ThreeDPhotoCarousel({
               <X className="w-5 h-5 text-vanilla-custard" />
             </button>
 
-            <img
+            <Image
               src={activeImg}
               alt="Enlarged Silk Karagiri Collection"
+              width={1230}
+              height={1278}
+              sizes="(max-width: 640px) 92vw, 576px"
               className="max-h-[80vh] w-auto object-contain rounded-2xl drop-shadow-2xl"
             />
           </div>
@@ -252,9 +275,13 @@ export function ThreeDPhotoCarousel({
               }}
             >
               {/* Pure Graphic Saree Emblem: No background box, no borders, natural drop shadow */}
-              <img
+              <Image
                 src={imgUrl}
                 alt={`Silk Karagiri Heritage Saree ${originalIndex}`}
+                width={1230}
+                height={1278}
+                sizes="(max-width: 640px) 200px, 260px"
+                draggable={false}
                 className="w-auto h-[180px] sm:h-[205px] md:h-[230px] max-w-full object-contain drop-shadow-2xl transition-transform duration-200 group-hover:scale-106 pointer-events-none"
                 loading={i < 5 ? "eager" : "lazy"}
               />

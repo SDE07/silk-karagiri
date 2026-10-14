@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -63,12 +65,12 @@ export interface WheelCarouselProps {
 }
 
 export const wheelCarouselDefaultItems: WheelCarouselItem[] = [
-  { label: "Kanchipuram Silk", image: "/images/scrollerimg/img1.png", origin: "Kanchipuram" },
-  { label: "Soft Silk", image: "/images/scrollerimg/img2.png", origin: "Coimbatore & Arani" },
-  { label: "Banaras Silk", image: "/images/scrollerimg/img3.png", origin: "Varanasi" },
-  { label: "Paithani Silk", image: "/images/scrollerimg/img4.png", origin: "Yeola & Paithan" },
-  { label: "Chanderi Silk", image: "/images/scrollerimg/img5.png", origin: "Chanderi" },
-  { label: "Designer Saree’s", image: "/images/scrollerimg/img6.png", origin: "Atelier" },
+  { label: "Kanchipuram Silk", image: "/images/scrollerimg/img1.webp", origin: "Kanchipuram" },
+  { label: "Soft Silk", image: "/images/scrollerimg/img2.webp", origin: "Coimbatore & Arani" },
+  { label: "Banaras Silk", image: "/images/scrollerimg/img3.webp", origin: "Varanasi" },
+  { label: "Paithani Silk", image: "/images/scrollerimg/img4.webp", origin: "Yeola & Paithan" },
+  { label: "Chanderi Silk", image: "/images/scrollerimg/img5.webp", origin: "Chanderi" },
+  { label: "Designer Saree’s", image: "/images/scrollerimg/img6.webp", origin: "Atelier" },
 ];
 
 const aspectRatios = {
@@ -208,8 +210,11 @@ export function WheelCarousel({
     [carouselItems, itemCount, onActiveChange],
   );
 
+  // Latest-callback ref for the animation loop; updated after render, not during it.
   const commitRotationRef = useRef(commitRotation);
-  commitRotationRef.current = commitRotation;
+  useEffect(() => {
+    commitRotationRef.current = commitRotation;
+  }, [commitRotation]);
 
   const runAnimation = useCallback(() => {
     if (frameRef.current !== null) return;
@@ -364,11 +369,101 @@ export function WheelCarousel({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "flex h-full min-h-[380px] sm:min-h-[440px] w-full items-center justify-center overflow-hidden bg-transparent select-none",
+        "flex h-full sm:min-h-[440px] w-full items-center justify-center overflow-hidden bg-transparent select-none",
         className,
       )}
       style={{ backgroundColor: palette.background }}
     >
+      {/* Phones: the wheel's text column would be ~170px wide and its stage blocks page scrolling
+          (touch-none), so small screens get a compact layout on the same state — full-width photo,
+          swipe or arrows to change, the active name in full, and progress dots. */}
+      <div className="flex w-full flex-col items-center sm:hidden">
+        <motion.div
+          className="relative aspect-square w-full max-w-[340px] touch-pan-y"
+          drag={reduceMotion ? false : "x"}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.25}
+          onDragEnd={(_, info) => {
+            if (Math.abs(info.offset.x) > 50) moveBy(info.offset.x < 0 ? 1 : -1);
+          }}
+        >
+          <AnimatePresence initial={false} mode="sync">
+            <motion.div
+              key={`compact-${safeSelectedIndex}`}
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.03 }}
+              transition={{ duration: reduceMotion ? 0 : crossfadeDuration, ease: [0.25, 1, 0.5, 1] }}
+              className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            >
+              <Image
+                src={selectedItem.image}
+                alt={selectedItem.imageAlt ?? selectedItem.label}
+                width={1230}
+                height={1278}
+                sizes="340px"
+                className="max-h-full w-auto max-w-full select-none object-contain drop-shadow-2xl"
+                draggable={false}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+
+        <div className="mt-4 flex w-full max-w-[360px] items-center gap-3 px-1">
+          <button
+            type="button"
+            onClick={() => moveBy(-1)}
+            aria-label="Previous saree"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-ink-black shadow-sm ring-1 ring-stone-200 transition-colors active:bg-[#9f2d55] active:text-white"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <div className="min-w-0 flex-1 text-center" aria-live="polite">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.p
+                key={`compact-label-${safeSelectedIndex}`}
+                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.25 }}
+                className="font-heading-main text-[1.45rem] font-bold leading-tight"
+                style={{ color: palette.selected }}
+              >
+                {selectedItem.label}
+              </motion.p>
+            </AnimatePresence>
+            <p className="mt-1 font-ui text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500">
+              {String(safeSelectedIndex + 1).padStart(2, "0")} / {String(itemCount).padStart(2, "0")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => moveBy(1)}
+            aria-label="Next saree"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-ink-black shadow-sm ring-1 ring-stone-200 transition-colors active:bg-[#9f2d55] active:text-white"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="mt-3 flex items-center gap-1.5">
+          {carouselItems.map((item, index) => (
+            <button
+              key={`dot-${item.label}-${index}`}
+              type="button"
+              onClick={() => moveBy(shortestOffset(index, rotation, itemCount))}
+              aria-label={`Show ${item.label}`}
+              aria-current={index === safeSelectedIndex}
+              className={cn(
+                "h-1.5 rounded-full transition-all duration-300",
+                index === safeSelectedIndex ? "w-5" : "w-1.5 bg-stone-300",
+              )}
+              style={index === safeSelectedIndex ? { backgroundColor: palette.marker } : undefined}
+            />
+          ))}
+        </div>
+      </div>
+
       <div
         ref={stageRef}
         role="listbox"
@@ -381,7 +476,7 @@ export function WheelCarousel({
         }
         tabIndex={0}
         className={cn(
-          "flex h-full w-full touch-none select-none items-center overflow-hidden outline-none",
+          "hidden h-full w-full touch-none select-none items-center overflow-hidden outline-none sm:flex",
           photoSide === "right" && "flex-row-reverse",
           isDragging ? "cursor-grabbing" : "cursor-grab",
         )}
@@ -421,9 +516,12 @@ export function WheelCarousel({
                 transition={{ duration: reduceMotion ? 0 : crossfadeDuration, ease: [0.25, 1, 0.5, 1] }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none"
               >
-                <img
+                <Image
                   src={selectedItem.image}
                   alt={selectedItem.imageAlt ?? selectedItem.label}
+                  width={1230}
+                  height={1278}
+                  sizes="(max-width: 640px) 80vw, 520px"
                   className="max-h-full w-auto max-w-full object-contain drop-shadow-2xl select-none"
                   draggable={false}
                 />

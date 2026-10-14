@@ -10,7 +10,7 @@ type Fields = { name: string; phone: string; email: string; topic: string; messa
 const EMPTY: Fields = { name: "", phone: "", email: "", topic: TOPICS[0], message: "" };
 
 const inputClass =
-  "w-full rounded-xl bg-vanilla-custard-900 px-4 py-3 font-body text-[15px] text-ink-black placeholder:text-stone-400 ring-1 ring-stone-200 outline-none transition-[box-shadow,background-color] focus:bg-white focus:ring-2 focus:ring-[#9f2d55]/50";
+  "w-full rounded-xl bg-vanilla-custard-900 px-4 py-3 font-body text-base sm:text-[15px] text-ink-black placeholder:text-stone-400 ring-1 ring-stone-200 outline-none transition-[box-shadow,background-color] focus:bg-white focus:ring-2 focus:ring-[#9f2d55]/50";
 const labelClass = "mb-1.5 block font-ui text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500";
 
 /** Composes the enquiry as a readable message for WhatsApp or email. */

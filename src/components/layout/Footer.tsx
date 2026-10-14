@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Check } from "lucide-react";
 
 export function Footer() {
@@ -18,10 +19,14 @@ export function Footer() {
 
   return (
     <footer className="relative w-full overflow-hidden border-t border-golden-orange/25">
-      {/* Panoramic Scenic Background: footer.png */}
-      <div
-        className="absolute inset-0 bg-cover bg-bottom bg-no-repeat pointer-events-none"
-        style={{ backgroundImage: "url('/images/footer.png')" }}
+      {/* Panoramic scenic background — lazy, sized per device */}
+      <Image
+        src="/images/footer.webp"
+        alt=""
+        aria-hidden
+        fill
+        sizes="100vw"
+        className="pointer-events-none object-cover object-bottom"
       />
 
       {/* Subtle Warm Gradient Overlay (Whitish Cast Reduced to Let Scenic Artwork Glow) */}
@@ -231,7 +236,7 @@ export function Footer() {
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-transparent px-3 py-1.5 text-xs font-body text-ink-black placeholder:text-ink-black/50 outline-none font-medium"
+                  className="w-full bg-transparent px-3 py-1.5 text-base sm:text-xs font-body text-ink-black placeholder:text-ink-black/50 outline-none font-medium"
                   required
                 />
                 <button

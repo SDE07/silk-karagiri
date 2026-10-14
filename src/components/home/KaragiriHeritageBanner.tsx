@@ -14,11 +14,10 @@ export function KaragiriHeritageBanner() {
       >
         <div className="relative w-full aspect-[2025/776] overflow-hidden">
           <Image
-            src="/images/banner/karagiri-banner.png?v=4"
+            src="/images/banner/karagiri-banner.webp"
             alt="Silk Karagiri — Timeless Tradition, Exceptional Elegance"
             fill
-            priority
-            unoptimized
+            quality={90}
             sizes="(max-width: 1720px) 100vw, 1720px"
             className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.01]"
           />
