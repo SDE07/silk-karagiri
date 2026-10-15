@@ -8,7 +8,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 const LAYERS = "/images/atelier";
 const EASE = [0.22, 1, 0.36, 1] as const;
 /** The model is a 4× AI-upscaled master; serve the layers at high quality so she stays crisp. */
-const QUALITY = 90;
+const QUALITY = 95;
 const SIZES = "(max-width: 1024px) 90vw, 420px";
 
 /** Model photo aspect (533 × 822). The stage box must use it so every layer lines up. */
@@ -21,6 +21,10 @@ const sareeMask: React.CSSProperties = {
   WebkitMaskSize: "100% 100%",
   maskRepeat: "no-repeat",
   WebkitMaskRepeat: "no-repeat",
+  imageRendering: "-webkit-optimize-contrast",
+  WebkitBackfaceVisibility: "hidden",
+  backfaceVisibility: "hidden",
+  transform: "translateZ(0.5px)",
 };
 
 interface DrapeStageProps {
@@ -86,15 +90,19 @@ export function DrapeStage({
           fill
           sizes={SIZES}
           quality={QUALITY}
-          className="object-cover"
+          className="object-cover [image-rendering:-webkit-optimize-contrast]"
         />
 
         <AnimatePresence initial={false}>
           <motion.div
             key={drape}
             aria-hidden
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ ...sareeMask, backgroundImage: `url(${drape})` }}
+            className="absolute inset-0 bg-cover bg-center will-change-[clip-path,opacity]"
+            style={{
+              ...sareeMask,
+              backgroundImage: `url(${drape})`,
+              filter: "contrast(1.18) saturate(1.16) brightness(1.02)",
+            }}
             initial={
               reduce
                 ? { opacity: 0, zIndex: 2 }
@@ -121,7 +129,7 @@ export function DrapeStage({
           fill
           sizes={SIZES}
           quality={QUALITY}
-          className="z-[3] object-cover mix-blend-multiply"
+          className="z-[3] object-cover mix-blend-multiply opacity-80"
         />
         <Image
           src={`${LAYERS}/gloss-hd.png`}
@@ -130,7 +138,7 @@ export function DrapeStage({
           fill
           sizes={SIZES}
           quality={QUALITY}
-          className="z-[4] object-cover mix-blend-screen"
+          className="z-[4] object-cover mix-blend-screen opacity-90"
         />
 
         {/* Zari light that travels with the reveal edge */}

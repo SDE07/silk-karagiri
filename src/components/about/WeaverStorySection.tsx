@@ -112,8 +112,9 @@ export function WeaverStorySection() {
         gsap.to(q("[data-floral]"), { rotate: 360, duration: 140, repeat: -1, ease: "none" });
 
         // Right: eyebrow, word-by-word heading, copy, Marathi card, highlights, CTAs
+        const copyTrigger = q("[data-copy]")[0] || root;
         const right = gsap.timeline({
-          scrollTrigger: { trigger: q("[data-copy]")[0], start: "top 75%" },
+          scrollTrigger: { trigger: copyTrigger, start: "top 75%" },
           defaults: { ease: "power3.out" },
         });
         right
@@ -149,7 +150,15 @@ export function WeaverStorySection() {
       });
     }, root);
 
-    return () => ctx.revert();
+    // Refresh ScrollTrigger once DOM/fonts have stabilized after Next.js hydration
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 400);
+
+    return () => {
+      clearTimeout(refreshTimer);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -208,6 +217,8 @@ export function WeaverStorySection() {
                   src="/images/about/karagir.webp"
                   alt="A master weaver presenting a handwoven maroon and royal blue silk saree with gold zari border"
                   fill
+                  priority
+                  unoptimized
                   sizes="(max-width: 640px) 340px, 440px"
                   className="object-contain object-bottom drop-shadow-[0_18px_28px_rgba(20,10,0,0.35)]"
                 />

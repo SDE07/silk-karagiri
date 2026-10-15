@@ -122,11 +122,11 @@ for (const [folder, slug] of FOLDERS) {
           .clone()
           .extract({ left: Math.round((w - cw) / 2), top: Math.round((h - ch) / 2), width: cw, height: ch })
           .resize({ ...SWATCH_SIZE, fit: "cover" });
-    // Unsharp mask restores weave detail lost to WhatsApp compression. (An AI upscaler was tried: it
-    // invents thread hatching that isn't in the real weave, so a faithful sharpen is used instead.)
+    // Unsharp mask and micro-contrast restore weave detail lost to compression, making the draped saree crisp.
     await swatch
-      .sharpen({ sigma: 1, m1: 0.8, m2: 2.5 })
-      .webp({ quality: 82 })
+      .modulate({ saturation: 1.08 })
+      .sharpen({ sigma: 1.2, m1: 1.2, m2: 3.2 })
+      .webp({ quality: 92 })
       .toFile(path.join(outDir, `${n}-drape.webp`));
   }
 

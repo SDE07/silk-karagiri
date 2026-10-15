@@ -79,7 +79,8 @@ export function SareeAtelierSection() {
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const looksRef = useRef<HTMLDivElement>(null);
+  const desktopLooksRef = useRef<HTMLDivElement>(null);
+  const mobileLooksRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { amount: 0.3 });
 
   const [active, setActive] = useState(0);
@@ -131,7 +132,59 @@ export function SareeAtelierSection() {
   }, [autoplay, active, goTo]);
 
   useEffect(() => centreChild(listRef.current, active, "y", !reduce), [active, reduce]);
-  useEffect(() => centreChild(looksRef.current, look, "x", !reduce), [look, active, reduce]);
+  useEffect(() => {
+    centreChild(desktopLooksRef.current, look, "x", !reduce);
+    centreChild(mobileLooksRef.current, look, "x", !reduce);
+  }, [look, active, reduce]);
+
+  const renderChangeLook = (isMobileView: boolean) => (
+    <div className={cn("border-t border-golden-orange/20 pt-4 sm:pt-5", isMobileView ? "mt-4" : "mt-5")}>
+      <div className="mb-2 flex items-baseline justify-between">
+        <span className="font-heading-sub text-base sm:text-lg italic text-[#9f2d55]">Change look</span>
+        <span className="font-ui text-[9.5px] sm:text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">
+          Look {look + 1} of {looks.length}
+        </span>
+      </div>
+      <motion.div
+        key={collection.slug}
+        ref={isMobileView ? mobileLooksRef : desktopLooksRef}
+        initial={reduce ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
+        className="relative flex gap-2 overflow-x-auto px-1 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]"
+      >
+        {looks.map((n, i) => {
+          const on = i === look && video === null;
+          return (
+            <button
+              key={n}
+              type="button"
+              onClick={() => pickLook(i)}
+              aria-label={`Show look ${i + 1}`}
+              aria-pressed={on}
+              className={cn(
+                "group relative h-[62px] w-[48px] sm:h-[68px] sm:w-[52px] shrink-0 overflow-hidden rounded-lg bg-vanilla-custard-800 transition-all duration-300",
+                on
+                  ? "ring-2 ring-[#9f2d55] ring-offset-2 ring-offset-vanilla-custard-900"
+                  : "ring-1 ring-stone-200 hover:-translate-y-0.5 hover:shadow-md"
+              )}
+            >
+              <Image
+                src={collectionImage(collection, n)}
+                alt=""
+                fill
+                sizes="104px"
+                className={cn("object-cover transition-[transform,filter] duration-500 group-hover:scale-110", !on && "saturate-[0.85]")}
+              />
+            </button>
+          );
+        })}
+      </motion.div>
+      <p className="mt-2 font-body text-[11px] sm:text-xs italic leading-relaxed text-stone-500 px-2 sm:px-0">
+        Virtual drape shows the colour and weave — switch to Actual photo for the exact saree.
+      </p>
+    </div>
+  );
 
   // Warm the cache so a fabric change never waits on the network mid-sweep.
   useEffect(() => {
@@ -183,22 +236,22 @@ export function SareeAtelierSection() {
 
         {/* Collections · Model · Details */}
         <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 sm:mt-14 lg:grid-cols-[minmax(0,300px)_minmax(320px,380px)_minmax(0,1fr)] lg:items-start lg:gap-10 xl:grid-cols-[minmax(0,330px)_minmax(320px,380px)_minmax(0,1fr)] xl:gap-14">
-          {/* ── Left: collections inbox ───────────────────────────── */}
-          <div className="order-3 min-w-0 lg:order-1">
-            <div className="overflow-hidden rounded-2xl bg-white/75 shadow-[0_24px_50px_-34px_rgba(107,20,38,0.35)] ring-1 ring-stone-200/70 backdrop-blur">
-              <div className="flex items-center justify-between gap-3 border-b border-stone-200/70 px-4 py-3">
+          {/* ── Left: collections inbox (Order 1 on mobile: before the model stage image) ── */}
+          <div className="order-1 min-w-0 lg:order-1">
+            <div className="overflow-hidden rounded-2xl bg-white/80 shadow-[0_20px_45px_-30px_rgba(107,20,38,0.35)] ring-1 ring-stone-200/80 backdrop-blur">
+              <div className="flex items-center justify-between gap-3 border-b border-stone-200/70 px-3.5 sm:px-4 py-2.5 sm:py-3">
                 <div className="leading-tight">
                   <span className="block font-ui text-[10px] font-bold uppercase tracking-[0.22em] text-ink-black">Collections</span>
-                  <span className="mt-0.5 block font-ui text-[10px] tracking-wider text-stone-500">
+                  <span className="mt-0.5 block font-ui text-[9.5px] tracking-wider text-stone-500">
                     {pad(active + 1)} of {pad(TOTAL)}
                   </span>
                 </div>
                 <div className="flex gap-1.5">
                   <button type="button" onClick={() => goTo(active - 1)} aria-label="Previous collection" className={iconButton}>
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </button>
                   <button type="button" onClick={() => goTo(active + 1)} aria-label="Next collection" className={iconButton}>
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </button>
                 </div>
               </div>
@@ -214,18 +267,18 @@ export function SareeAtelierSection() {
                     goTo(active + (e.key === "ArrowDown" ? 1 : -1));
                   }
                 }}
-                className="relative max-h-[420px] divide-y divide-stone-100 overflow-y-auto overscroll-contain outline-none [scrollbar-width:thin] lg:max-h-[520px]"
+                className="relative h-[114px] max-h-[114px] sm:h-auto sm:max-h-[380px] lg:max-h-[520px] divide-y divide-stone-100 overflow-y-auto overscroll-contain outline-none [scrollbar-width:thin] touch-pan-y snap-y snap-mandatory"
               >
                 {SAREE_COLLECTIONS.map((c, i) => {
                   const isActive = i === active;
                   return (
-                    <li key={c.slug} role="option" aria-selected={isActive}>
+                    <li key={c.slug} role="option" aria-selected={isActive} className="snap-start shrink-0">
                       <button
                         type="button"
                         tabIndex={-1}
                         onClick={() => goTo(i)}
                         className={cn(
-                          "group relative flex w-full items-center gap-3 px-4 py-3 text-left transition-colors",
+                          "group relative flex w-full items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left transition-colors h-[57px] sm:h-auto",
                           isActive ? "bg-[#9f2d55]/[0.06]" : "hover:bg-vanilla-custard-800/50"
                         )}
                       >
@@ -238,34 +291,35 @@ export function SareeAtelierSection() {
                         )}
                         <span
                           className={cn(
-                            "relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 transition-shadow",
+                            "relative h-8 w-8 sm:h-10 sm:w-10 shrink-0 overflow-hidden rounded-full ring-2 transition-shadow",
                             isActive ? "ring-[#9f2d55]/60" : "ring-white"
                           )}
                         >
                           <Image src={collectionImage(c, c.cover)} alt="" fill sizes="40px" className="object-cover" />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="flex items-baseline justify-between gap-2">
+                          <span className="flex items-baseline justify-between gap-1.5">
                             <span
                               className={cn(
-                                "truncate font-ui text-[13px] tracking-tight",
+                                "truncate font-ui text-[12px] sm:text-[13px] tracking-tight",
                                 isActive ? "font-bold text-[#6b1426]" : "font-semibold text-ink-black group-hover:text-[#6b1426]"
                               )}
+                              title={c.name}
                             >
                               {c.name}
                             </span>
-                            <span className="flex shrink-0 items-center gap-1 font-ui text-[10px] text-stone-500">
-                              {c.videos && <Play className="h-2.5 w-2.5 fill-current text-[#9f2d55]" aria-label="Has video" />}
+                            <span className="flex shrink-0 items-center gap-1 font-ui text-[9px] sm:text-[10px] text-stone-500">
+                              {c.videos && <Play className="h-2 w-2 sm:h-2.5 sm:w-2.5 fill-current text-[#9f2d55]" aria-label="Has video" />}
                               {pad(i + 1)}
                             </span>
                           </span>
                           <span className="mt-0.5 flex items-center gap-1.5">
                             {c.badge && (
-                              <span className="shrink-0 rounded bg-golden-orange/15 px-1.5 py-px font-ui text-[9px] font-bold uppercase tracking-wider text-[#8a5a00]">
+                              <span className="shrink-0 rounded bg-golden-orange/15 px-1.5 py-px font-ui text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider text-[#8a5a00]">
                                 {c.badge}
                               </span>
                             )}
-                            <span className="truncate font-body text-[13px] text-stone-500">{c.tagline}</span>
+                            <span className="truncate font-body text-[11px] sm:text-[13px] text-stone-500">{c.tagline}</span>
                           </span>
                         </span>
                         {isActive && autoplay && (
@@ -285,8 +339,8 @@ export function SareeAtelierSection() {
             </div>
           </div>
 
-          {/* ── Centre: the model ─────────────────────────────────── */}
-          <div className="order-1 min-w-0 lg:order-2">
+          {/* ── Centre: the model (Order 2 on mobile: right below collections inbox) ───────── */}
+          <div className="order-2 min-w-0 lg:order-2">
             <motion.div
               onHoverStart={() => setHovering(true)}
               onHoverEnd={() => setHovering(false)}
@@ -435,10 +489,14 @@ export function SareeAtelierSection() {
               </div>
             </div>
 
+            {/* Mobile-only Change look block — placed directly after the model drape image */}
+            <div className="block lg:hidden w-full max-w-[380px] mx-auto">
+              {renderChangeLook(true)}
+            </div>
           </div>
 
-          {/* ── Right: the collection ─────────────────────────────── */}
-          <div className="order-2 min-w-0 lg:order-3 lg:pt-4">
+          {/* ── Right: the collection details (Order 3 on mobile) ───────────────────────── */}
+          <div className="order-3 min-w-0 lg:order-3 lg:pt-4">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div key={collection.slug} variants={group} initial="hidden" animate="show" exit="exit">
                 <motion.div variants={item} className="flex items-center gap-3 font-ui text-[11px] font-bold tracking-[0.25em]">
@@ -466,16 +524,23 @@ export function SareeAtelierSection() {
                   {collection.story}
                 </motion.p>
 
-                {/* Weave notes — one row of three */}
-                <motion.ul variants={item} className="mt-6 flex gap-3 border-t border-golden-orange/20 pt-5 sm:gap-4">
+                {/* Weave notes — strictly equal in 3 columns, strictly 2 lines of text on mobile & desktop */}
+                <motion.ul variants={item} className="mt-6 grid grid-cols-3 gap-2 sm:gap-4 border-t border-golden-orange/20 pt-5">
                   {notes.map(({ icon: Icon, title, text }) => (
-                    <li key={title} className="min-w-0 flex-1">
-                      <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white text-[#6b1426] shadow-xs ring-1 ring-stone-200/70">
-                        <Icon className="h-4 w-4" />
+                    <li key={title} className="min-w-0 flex flex-col items-start">
+                      <span className="relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-white text-[#6b1426] shadow-xs ring-1 ring-stone-200/70 shrink-0">
+                        <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-golden-orange ring-2 ring-vanilla-custard-900" />
                       </span>
-                      <span className="mt-2.5 block font-ui text-[9px] font-bold uppercase tracking-[0.2em] text-stone-500">{title}</span>
-                      <span className="mt-1 block font-body text-[14px] leading-snug text-ink-black">{text}</span>
+                      <span className="mt-2 block font-ui text-[8.5px] xs:text-[9px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.2em] text-stone-500 truncate w-full">
+                        {title}
+                      </span>
+                      <span
+                        className="mt-1 block font-body text-[11px] xs:text-[12px] sm:text-[13.5px] leading-tight sm:leading-snug text-ink-black line-clamp-2 h-[2.2rem] xs:h-[2.4rem] sm:h-auto overflow-hidden"
+                        title={text}
+                      >
+                        {text}
+                      </span>
                     </li>
                   ))}
                 </motion.ul>
@@ -483,52 +548,9 @@ export function SareeAtelierSection() {
               </motion.div>
             </AnimatePresence>
 
-            {/* Change look — a compact strip of every wearable shade; the active one is kept in view */}
-            <div className="mt-5 border-t border-golden-orange/20 pt-5">
-              <div className="mb-2 flex items-baseline justify-between">
-                <span className="font-heading-sub text-lg italic text-[#9f2d55]">Change look</span>
-                <span className="font-ui text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">
-                  Look {look + 1} of {looks.length}
-                </span>
-              </div>
-              <motion.div
-                key={collection.slug}
-                ref={looksRef}
-                initial={reduce ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, ease: EASE, delay: 0.15 }}
-                className="relative flex gap-2 overflow-x-auto px-1 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]"
-              >
-                {looks.map((n, i) => {
-                  const on = i === look && video === null;
-                  return (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => pickLook(i)}
-                      aria-label={`Show look ${i + 1}`}
-                      aria-pressed={on}
-                      className={cn(
-                        "group relative h-[68px] w-[52px] shrink-0 overflow-hidden rounded-lg bg-vanilla-custard-800 transition-all duration-300",
-                        on
-                          ? "ring-2 ring-[#9f2d55] ring-offset-2 ring-offset-vanilla-custard-900"
-                          : "ring-1 ring-stone-200 hover:-translate-y-0.5 hover:shadow-md"
-                      )}
-                    >
-                      <Image
-                        src={collectionImage(collection, n)}
-                        alt=""
-                        fill
-                        sizes="104px"
-                        className={cn("object-cover transition-[transform,filter] duration-500 group-hover:scale-110", !on && "saturate-[0.85]")}
-                      />
-                    </button>
-                  );
-                })}
-              </motion.div>
-              <p className="mt-2 font-body text-xs italic leading-relaxed text-stone-500">
-                Virtual drape shows the colour and weave — switch to Actual photo for the exact saree.
-              </p>
+            {/* Desktop-only Change look block */}
+            <div className="hidden lg:block">
+              {renderChangeLook(false)}
             </div>
 
             {/* Actions — last, after the visitor has picked a look */}

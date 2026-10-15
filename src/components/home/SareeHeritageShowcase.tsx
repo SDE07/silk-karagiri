@@ -110,12 +110,12 @@ export function SareeHeritageShowcase() {
             </div>
           </div>
 
-          {/* Direct Weaver Clusters Tags (Crisp White Background - Not Golden, Clean Rounded Chips) */}
+          {/* Direct Weaver Clusters Tags (Crisp White Background - Clean Rounded Chips in 1 Line) */}
           <div className="pt-1.5">
-            <span className="text-[11px] font-ui font-semibold text-ink-black-300 uppercase tracking-wider block mb-2.5">
+            <span className="text-[11px] font-ui font-semibold text-ink-black-300 uppercase tracking-wider block mb-2">
               Direct Weaver Clusters:
             </span>
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:flex-nowrap w-full overflow-visible">
+            <div className="flex items-center gap-1.5 flex-nowrap w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden touch-pan-x pb-1">
               {["Kanchipuram", "Yeola", "Banaras", "Coimbatore", "Paithan", "Chanderi"].map((city) => (
                 <span
                   key={city}

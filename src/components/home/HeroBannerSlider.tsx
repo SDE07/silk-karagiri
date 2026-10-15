@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface BannerSlide {
   id: number;
   image: string;
+  /** object-position for the crop on phones/tablets — keeps the banner's headline in frame. */
+  focus: string;
   alt: string;
   title: string;
   subtitle: string;
@@ -18,6 +20,7 @@ const BANNER_SLIDES: BannerSlide[] = [
   {
     id: 1,
     image: "/images/banner1.webp",
+    focus: "50% center",
     alt: "Sarees — The Essence of Heritage & Grace",
     title: "The Essence of Heritage & Grace",
     subtitle: "Pure Mulberry & Heritage Silks",
@@ -26,6 +29,7 @@ const BANNER_SLIDES: BannerSlide[] = [
   {
     id: 2,
     image: "/images/banner2.webp",
+    focus: "36% center",
     alt: "Silk Karagiri — Kanjivaram Silk Traditional Craftsmanship & Timeless Elegance",
     title: "Kanjivaram Silk Vault",
     subtitle: "Traditional Craftsmanship & Timeless Elegance",
@@ -34,6 +38,7 @@ const BANNER_SLIDES: BannerSlide[] = [
   {
     id: 3,
     image: "/images/banner3.webp",
+    focus: "3% center",
     alt: "Silk Karagiri — A Trusted Destination For Pure and Premium Silk Sarees",
     title: "Pure & Premium Handlooms",
     subtitle: "Where Every Thread Tells a Story of Heritage",
@@ -42,6 +47,7 @@ const BANNER_SLIDES: BannerSlide[] = [
   {
     id: 4,
     image: "/images/banner4.webp",
+    focus: "50% center",
     alt: "Silk Karagiri — From Generation to Generation, Our Heritage Lives On",
     title: "Three Generations of Grace",
     subtitle: "Heirloom Silks Handed Down with Love",
@@ -50,6 +56,7 @@ const BANNER_SLIDES: BannerSlide[] = [
   {
     id: 5,
     image: "/images/banner5.webp",
+    focus: "57% center",
     alt: "Exclusive Banarasi Silk Saree Collection — Traditional Craftsmanship",
     title: "Exclusive Banarasi Collection",
     subtitle: "Pure Silver & Electrum Zari Brocades",
@@ -230,8 +237,9 @@ export function HeroBannerSlider() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* 90vh Desktop Height Hero Canvas (90% viewport height with 10% bottom peek) */}
-      <div className="relative w-full h-[75vh] sm:h-[82vh] md:h-[88vh] lg:h-[90vh] min-h-[440px] sm:min-h-[540px] md:min-h-[640px] lg:min-h-[720px] max-h-[960px]">
+      {/* Hero canvas sized to the art (banners are 1916 × 821): the full banner from lg up, a 16:11
+          crop on tablets and a square crop on phones — each slide's `focus` keeps its headline in frame. */}
+      <div className="relative w-full aspect-square sm:aspect-[16/11] lg:aspect-[1916/821] max-h-[960px]">
         {/* Sliding Track with seamless infinite wrap */}
         <div
           className={`flex h-full w-full will-change-transform ${
@@ -268,11 +276,16 @@ export function HeroBannerSlider() {
                     src={slide.image}
                     alt={slide.alt}
                     fill
-                    // Slide 1 is the LCP image; the rest lazy-load as the slider nears them.
-                    priority={index === 1}
-                    sizes="100vw"
-                    quality={90}
-                    className="object-cover object-center transform transition-transform duration-1000 group-hover:scale-102"
+                    // Slide 1 is the LCP image: preloaded at high priority. The rest lazy-load as the
+                    // slider nears them.
+                    preload={index === 1}
+                    fetchPriority={index === 1 ? "high" : "auto"}
+                    loading={index === 1 ? "eager" : "lazy"}
+                    // Phones and tablets show a crop of the wide banner, so it renders wider than the
+                    // screen (≈2.3× on phones, 1.6× on tablets); from lg up it fits the width.
+                    sizes="(max-width: 639px) 234vw, (max-width: 1023px) 160vw, 100vw"
+                    className="object-cover transform transition-transform duration-1000 group-hover:scale-102"
+                    style={{ objectPosition: slide.focus }}
                   />
 
                   {/* Subtle vignette shadow overlay for depth */}
@@ -292,7 +305,7 @@ export function HeroBannerSlider() {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           aria-label="Previous Slide"
-          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-vanilla-custard-900/85 hover:bg-vanilla-custard-900 text-ink-black border border-golden-orange/35 shadow-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer opacity-85 hover:opacity-100"
+          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-vanilla-custard-900/85 hover:bg-vanilla-custard-900 text-ink-black border border-golden-orange/35 shadow-xl backdrop-blur-md hidden sm:flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer opacity-85 hover:opacity-100"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-ink-black" />
         </button>
@@ -306,7 +319,7 @@ export function HeroBannerSlider() {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           aria-label="Next Slide"
-          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-vanilla-custard-900/85 hover:bg-vanilla-custard-900 text-ink-black border border-golden-orange/35 shadow-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer opacity-85 hover:opacity-100"
+          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-vanilla-custard-900/85 hover:bg-vanilla-custard-900 text-ink-black border border-golden-orange/35 shadow-xl backdrop-blur-md hidden sm:flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer opacity-85 hover:opacity-100"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-ink-black" />
         </button>
@@ -315,19 +328,25 @@ export function HeroBannerSlider() {
         <div
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-ink-black/30 backdrop-blur-md border border-golden-orange/25 shadow-lg"
+          className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-ink-black/30 backdrop-blur-md border border-golden-orange/25 shadow-lg"
         >
           {BANNER_SLIDES.map((_, index) => (
+            // 24px tall tap target around a 10px dot, so it's easy to hit with a thumb.
             <button
               key={index}
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                activeRealIndex === index
-                  ? "w-8 sm:w-10 bg-golden-orange shadow-md"
-                  : "w-2.5 bg-vanilla-custard-100/50 hover:bg-vanilla-custard-100/90"
-              }`}
-            />
+              aria-current={activeRealIndex === index}
+              className="group flex h-6 min-w-6 cursor-pointer items-center justify-center"
+            >
+              <span
+                className={`block h-2.5 rounded-full transition-all duration-300 ${
+                  activeRealIndex === index
+                    ? "w-8 sm:w-10 bg-golden-orange shadow-md"
+                    : "w-2.5 bg-vanilla-custard-100/50 group-hover:bg-vanilla-custard-100/90"
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>

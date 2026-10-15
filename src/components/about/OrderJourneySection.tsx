@@ -85,7 +85,14 @@ export function OrderJourneySection() {
       );
     }, root);
 
-    return () => ctx.revert();
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 400);
+
+    return () => {
+      clearTimeout(refreshTimer);
+      ctx.revert();
+    };
   }, []);
 
   return (

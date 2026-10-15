@@ -48,7 +48,8 @@ export function SilkCurtainIntro() {
             src="/images/sarre1.webp"
             alt=""
             fill
-            priority
+            preload
+            fetchPriority="high"
             sizes="50vw"
             className="object-cover"
             style={{ objectPosition: "60% center" }}
@@ -105,7 +106,8 @@ export function SilkCurtainIntro() {
             src="/images/sarre1.webp"
             alt=""
             fill
-            priority
+            preload
+            fetchPriority="high"
             sizes="50vw"
             className="object-cover"
             style={{ objectPosition: "40% center" }}
@@ -220,6 +222,7 @@ export function SilkCurtainIntro() {
                   alt="Silk Karagiri"
                   fill
                   priority
+                  unoptimized
                   sizes="76px"
                   className="object-contain"
                 />

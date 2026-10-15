@@ -4,6 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { FindHeirloomCta } from "@/components/common/FindHeirloomCta";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SilkCurtainIntro } from "@/components/common/SilkCurtainIntro";
 import { APP_CONFIG } from "@/lib/constants";
@@ -21,7 +22,6 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-heading-main",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
 });
 
 // 2. Sub-headings (H3, H4 / Product Titles): Marcellus
@@ -37,7 +37,6 @@ const ebGaramond = EB_Garamond({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
 });
 
 // 4. Prices, Buttons & Navigation (UI): Montserrat
@@ -45,7 +44,6 @@ const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-ui",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
 });
 
 // 5. Marathi lines (Devanagari): Tiro Devanagari Marathi
@@ -101,6 +99,7 @@ export default function RootLayout({
           <Navbar />
           <CartDrawer />
           <main className="flex-1">{children}</main>
+          <FindHeirloomCta />
           <Footer />
         </CartProvider>
       </body>

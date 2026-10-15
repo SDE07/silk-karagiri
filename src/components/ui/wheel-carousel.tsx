@@ -432,7 +432,7 @@ export function WheelCarousel({
                 {selectedItem.label}
               </motion.p>
             </AnimatePresence>
-            <p className="mt-1 font-ui text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500">
+            <p className="mt-1 font-ui text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-600">
               {String(safeSelectedIndex + 1).padStart(2, "0")} / {String(itemCount).padStart(2, "0")}
             </p>
           </div>
@@ -446,7 +446,7 @@ export function WheelCarousel({
           </button>
         </div>
 
-        <div className="mt-3 flex items-center gap-1.5">
+        <div className="mt-1 flex items-center">
           {carouselItems.map((item, index) => (
             <button
               key={`dot-${item.label}-${index}`}
@@ -454,12 +454,16 @@ export function WheelCarousel({
               onClick={() => moveBy(shortestOffset(index, rotation, itemCount))}
               aria-label={`Show ${item.label}`}
               aria-current={index === safeSelectedIndex}
-              className={cn(
-                "h-1.5 rounded-full transition-all duration-300",
-                index === safeSelectedIndex ? "w-5" : "w-1.5 bg-stone-300",
-              )}
-              style={index === safeSelectedIndex ? { backgroundColor: palette.marker } : undefined}
-            />
+              className="flex h-7 min-w-6 items-center justify-center"
+            >
+              <span
+                className={cn(
+                  "block h-1.5 rounded-full transition-all duration-300",
+                  index === safeSelectedIndex ? "w-5" : "w-1.5 bg-stone-300",
+                )}
+                style={index === safeSelectedIndex ? { backgroundColor: palette.marker } : undefined}
+              />
+            </button>
           ))}
         </div>
       </div>
