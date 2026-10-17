@@ -14,25 +14,41 @@ import { motion, AnimatePresence } from "framer-motion";
  */
 
 export function SilkCurtainIntro() {
-  const [phase, setPhase] = useState<"enter" | "hold" | "opening" | "done">("enter");
+  const [phase, setPhase] = useState<"enter" | "hold" | "opening" | "done">(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (sessionStorage.getItem("silk_curtain_shown")) return "done";
+      } catch {}
+    }
+    return "enter";
+  });
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("hold"),    300);
-    const t2 = setTimeout(() => setPhase("opening"), 2800);
-    const t3 = setTimeout(() => setPhase("done"),    2800 + 1400);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, []);
+    if (phase === "done") return;
+    try {
+      sessionStorage.setItem("silk_curtain_shown", "1");
+    } catch {}
+
+    const t1 = setTimeout(() => setPhase("hold"), 250);
+    const t2 = setTimeout(() => setPhase("opening"), 1500);
+    const t3 = setTimeout(() => setPhase("done"), 1500 + 900);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [phase]);
 
   if (phase === "done") return null;
 
-  const isOpen    = phase === "opening";
+  const isOpen = phase === "opening";
   const isVisible = phase === "hold" || phase === "opening";
 
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[9999] overflow-hidden"
-      style={{ pointerEvents: isOpen ? "none" : "all" }}
+      onClick={() => setPhase("done")}
+      className="fixed inset-0 z-30 overflow-hidden pointer-events-none select-none"
     >
 
       {/* ── LEFT CURTAIN PANEL ── full saree visible */}

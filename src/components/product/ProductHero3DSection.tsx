@@ -8,6 +8,7 @@ import { GlassFolder, type FolderFile } from "@/components/ui/glass-folder";
 import { SAREE_COLLECTIONS, collectionImage, collectionLooks, collectionDrape } from "@/data/collections.data";
 import { ProductDetailPage, type Product as DetailProduct, type BreadcrumbItem, type ProductTag } from "@/components/ui/product-detail-page";
 import { useCart } from "@/context/CartContext";
+import { useAdmin } from "@/context/AdminContext";
 import { cn } from "@/lib/utils";
 
 // TypeScript definition for <model-viewer>
@@ -92,12 +93,14 @@ export function ProductHero3DSection() {
   const [modelReady, setModelReady] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState<string>("double-warp-soft-silk");
   const [activeLookIndex, setActiveLookIndex] = useState<number>(0);
+  const [cameraOrbit, setCameraOrbit] = useState<string>("0deg 75deg 105%");
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [folderWidth, setFolderWidth] = useState<number>(175);
   const modelViewerRef = useRef<HTMLElement | null>(null);
   const foldersScrollRef = useRef<HTMLDivElement>(null);
   const showcaseRef = useRef<HTMLDivElement>(null);
   const { addItem } = useCart();
+  const { products } = useAdmin();
 
   useEffect(() => {
     const handleResize = () => {
@@ -226,6 +229,29 @@ export function ProductHero3DSection() {
     }
   }, [selectedSlug, isMobile]);
 
+  // Dynamic camera perspective switching tailored when saree variety look or collection changes
+  useEffect(() => {
+    const lookAngles = [
+      "0deg 75deg 105%",   // Look 1: Direct Front drape
+      "35deg 78deg 100%",  // Look 2: Elegant 3/4 Pallu perspective
+      "70deg 75deg 105%",  // Look 3: Profile zari border
+      "-40deg 78deg 100%", // Look 4: Reverse pleat detail
+      "180deg 75deg 105%", // Look 5: Full rear cascade
+      "-70deg 75deg 105%", // Look 6: Left diagonal drape
+    ];
+    const targetAngle = lookAngles[activeLookIndex % lookAngles.length];
+    setCameraOrbit(targetAngle);
+    const viewer = modelViewerRef.current as any;
+    if (viewer) {
+      try {
+        viewer.cameraOrbit = targetAngle;
+        if (typeof viewer.jumpCameraToGoal === "function") {
+          viewer.jumpCameraToGoal();
+        }
+      } catch {}
+    }
+  }, [activeLookIndex, selectedSlug]);
+
   const scrollFolders = (direction: "left" | "right") => {
     if (!foldersScrollRef.current) return;
     const step = isMobile ? folderWidth + 16 : 220;
@@ -240,11 +266,23 @@ export function ProductHero3DSection() {
   const activeDrapes = activeLooks.map((n) => collectionDrape(activeCollection, n));
   const pricing = COLLECTION_PRICES[activeCollection.slug] || { price: 28500, originalPrice: 34000 };
 
+  // Match live product from Admin Panel (AdminContext)
+  const adminProduct = products.find(
+    (p) => p.collectionSlug === activeCollection.slug || p.slug === activeCollection.slug
+  );
+  const effectivePrice = adminProduct?.price ?? pricing.price;
+  const effectiveOriginalPrice = adminProduct?.originalPrice ?? pricing.originalPrice;
+  const effectiveInStock =
+    adminProduct !== undefined
+      ? adminProduct.inStock && (adminProduct.stockQuantity ?? 1) > 0
+      : true;
+  const effectiveStockQuantity = adminProduct?.stockQuantity;
+
   const detailProduct: DetailProduct = {
     name: activeCollection.name,
     subtitle: activeCollection.tagline,
-    price: pricing.price,
-    originalPrice: pricing.originalPrice,
+    price: effectivePrice,
+    originalPrice: effectiveOriginalPrice,
     currency: "₹",
     images: activeImages,
     description: activeCollection.story,
@@ -252,7 +290,8 @@ export function ProductHero3DSection() {
     motif: activeCollection.motif,
     border: activeCollection.border,
     sku: `SK-${activeCollection.slug.toUpperCase().slice(0, 8)}-${String(activeLooks[activeLookIndex] || activeCollection.cover).padStart(2, "0")}`,
-    inStock: true,
+    inStock: effectiveInStock,
+    stockQuantity: effectiveStockQuantity,
     tags: [
       { label: activeCollection.fabric, icon: Tag },
       { label: "Silk Mark Certified", icon: ShieldCheck },
@@ -327,7 +366,7 @@ export function ProductHero3DSection() {
           </div>
         </div>
 
-        {/* 2. 3D MODEL: Left column on desktop (lg:order-1), UPPER above folders on mobile (order-2) */}
+        {/* 2. 3D MODEL: Left column on desktop (lg:order-1), UPPER above folders on mobile (order-2) — ONLY THE MODEL */}
         <div className="lg:col-span-2 xl:col-span-2 lg:col-start-1 lg:row-start-1 lg:row-span-2 flex justify-center lg:justify-start order-2 lg:order-1 py-1">
           <div className="relative w-full max-w-[130px] sm:max-w-[160px] lg:max-w-[170px] h-[230px] sm:h-[280px] lg:h-[330px] flex items-center justify-center">
             {/* Fallback & Loading Skeleton with smooth fade out */}
@@ -343,12 +382,13 @@ export function ProductHero3DSection() {
               </div>
             </div>
 
-            {/* The 3D GLB Model Viewer — Tall, Slender, Floating on Page Canvas */}
+            {/* The 3D GLB Model Viewer — Clean, Pure, Floating Model on Canvas */}
             {/* @ts-expect-error - model-viewer is loaded via client script & npm */}
             <model-viewer
               ref={modelViewerRef}
               src="/4923c6d767f84055868c456a8f4c267b.glb"
-              alt="3D Handcrafted Royal Silk Saree Drape"
+              poster={activeDrapes[activeLookIndex] || activeImages[activeLookIndex]}
+              alt={`3D Drape of ${activeCollection.name}`}
               auto-rotate=""
               auto-rotate-delay="0"
               rotation-per-second="24deg"
@@ -357,7 +397,7 @@ export function ProductHero3DSection() {
               shadow-intensity="1.2"
               shadow-softness="0.8"
               exposure="1.08"
-              camera-orbit="0deg 75deg 105%"
+              camera-orbit={cameraOrbit}
               interaction-prompt="none"
               style={{
                 width: "100%",
@@ -484,37 +524,57 @@ export function ProductHero3DSection() {
           onImageChange={(idx) => setActiveLookIndex(idx)}
           onAddToCart={(prod, qty, lookIdx) => {
             const lookNum = activeLooks[lookIdx] || activeCollection.cover;
+            const lookSku = `SK-${activeCollection.slug.toUpperCase().slice(0, 8)}-${String(lookNum).padStart(2, "0")}`;
             for (let i = 0; i < qty; i++) {
               addItem({
                 id: `${activeCollection.slug}-look-${lookNum}`,
                 name: `${activeCollection.name} (Look ${lookIdx + 1})`,
                 slug: activeCollection.slug,
                 description: activeCollection.story,
-                price: pricing.price,
-                originalPrice: pricing.originalPrice,
+                story: activeCollection.story,
+                fabric: activeCollection.fabric,
+                motif: activeCollection.motif,
+                border: activeCollection.border,
+                price: effectivePrice,
+                originalPrice: effectiveOriginalPrice,
                 category: "Sarees",
-                inStock: true,
+                inStock: effectiveInStock,
                 image: collectionImage(activeCollection, lookNum),
+                images: activeImages,
                 badge: activeCollection.badge || "Heritage",
                 rating: 4.9,
+                reviewCount: 38,
+                tags: [activeCollection.fabric, activeCollection.motif, activeCollection.border],
+                sku: lookSku,
+                collectionSlug: activeCollection.slug,
               });
             }
           }}
           onBuyNow={(prod, qty, lookIdx) => {
             const lookNum = activeLooks[lookIdx] || activeCollection.cover;
+            const lookSku = `SK-${activeCollection.slug.toUpperCase().slice(0, 8)}-${String(lookNum).padStart(2, "0")}`;
             for (let i = 0; i < qty; i++) {
               addItem({
                 id: `${activeCollection.slug}-look-${lookNum}`,
                 name: `${activeCollection.name} (Look ${lookIdx + 1})`,
                 slug: activeCollection.slug,
                 description: activeCollection.story,
-                price: pricing.price,
-                originalPrice: pricing.originalPrice,
+                story: activeCollection.story,
+                fabric: activeCollection.fabric,
+                motif: activeCollection.motif,
+                border: activeCollection.border,
+                price: effectivePrice,
+                originalPrice: effectiveOriginalPrice,
                 category: "Sarees",
-                inStock: true,
+                inStock: effectiveInStock,
                 image: collectionImage(activeCollection, lookNum),
+                images: activeImages,
                 badge: activeCollection.badge || "Heritage",
                 rating: 4.9,
+                reviewCount: 38,
+                tags: [activeCollection.fabric, activeCollection.motif, activeCollection.border],
+                sku: lookSku,
+                collectionSlug: activeCollection.slug,
               });
             }
           }}

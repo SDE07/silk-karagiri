@@ -20,6 +20,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+const NAV_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "Products", href: "/products" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -28,11 +35,26 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [wishlistCount, setWishlistCount] = useState(2);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Eager prefetch all core routes on mount for instant zero-lag transitions
+  useEffect(() => {
+    NAV_LINKS.forEach((link) => {
+      router.prefetch(link.href);
+    });
+  }, [router]);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      // Transitions to earlier solid background when scrolling past the hero banner into the next section
-      setIsScrolled(window.scrollY > 80);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 80;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -44,13 +66,8 @@ export function Navbar() {
   const onHero = !shouldBeSolid;
   const fg = onHero ? "text-vanilla-custard" : "text-ink-black";
   const fgHover = onHero ? "hover:text-golden-orange" : "hover:text-dark-teal";
-  const navLink = cn(
-    "inline-flex items-center justify-center h-9 px-2 font-ui text-xs font-semibold uppercase tracking-widest transition-colors outline-none border-none ring-0 focus:outline-none focus-visible:outline-none focus:ring-0 leading-none cursor-pointer",
-    fg,
-    fgHover
-  );
   const iconButton = cn(
-    "relative p-2.5 rounded-md transition-colors cursor-pointer border border-transparent hover:border-golden-orange/30",
+    "relative p-2.5 rounded-md transition-all duration-100 cursor-pointer border border-transparent active:scale-95 hover:border-golden-orange/30",
     fg,
     onHero ? "hover:bg-white/10" : "hover:bg-vanilla-custard-800"
   );
@@ -62,12 +79,10 @@ export function Navbar() {
     }
   };
 
-
-
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full transition-all duration-500 ease-in-out",
+        "sticky top-0 z-50 w-full pointer-events-auto transition-[background-color,border-color,box-shadow] duration-200 ease-out",
         shouldBeSolid
           ? "border-b border-golden-orange/15 bg-vanilla-custard-900/95 backdrop-blur-md shadow-2xs"
           : "border-none border-b-0 bg-gradient-to-b from-black/40 via-transparent to-transparent shadow-none"
@@ -76,11 +91,11 @@ export function Navbar() {
       <div className="w-full px-6 sm:px-6 md:px-10 lg:px-12 xl:px-12 h-20 flex items-center justify-between gap-4">
         {/* Left Side: Mobile Menu + Brand Logo */}
         <div className="flex items-center gap-3">
-          {/* Mobile Popover Menu Trigger (Animated Icon from navigation-menu-4) */}
-          <Popover>
+          {/* Mobile Popover Menu Trigger */}
+          <Popover open={mobileOpen} onOpenChange={setMobileOpen}>
             <PopoverTrigger asChild>
               <Button
-                className={cn("group size-9 lg:hidden p-0", fg, onHero ? "hover:bg-white/10" : "hover:bg-vanilla-custard-800")}
+                className={cn("group size-9 lg:hidden p-0 active:scale-95 transition-transform", fg, onHero ? "hover:bg-white/10" : "hover:bg-vanilla-custard-800")}
                 variant="ghost"
                 size="icon"
                 aria-label="Toggle navigation menu"
@@ -135,38 +150,30 @@ export function Navbar() {
 
               {/* Mobile Links */}
               <nav className="space-y-3 font-ui text-xs uppercase tracking-wider font-semibold">
-                <div>
-                  <Link
-                    href="/"
-                    className="block py-2 text-ink-black hover:text-dark-teal border-b border-golden-orange/15"
-                  >
-                    Home
-                  </Link>
-                </div>
-                <div>
-                  <Link
-                    href="/products"
-                    className="block py-2 text-ink-black hover:text-dark-teal border-b border-golden-orange/15"
-                  >
-                    Products
-                  </Link>
-                </div>
-                <div>
-                  <Link
-                    href="/about"
-                    className="block py-2 text-ink-black hover:text-dark-teal border-b border-golden-orange/15"
-                  >
-                    About
-                  </Link>
-                </div>
-                <div>
-                  <Link
-                    href="/contact"
-                    className="block py-2 text-ink-black hover:text-dark-teal"
-                  >
-                    Artisan &amp; Contact
-                  </Link>
-                </div>
+                {NAV_LINKS.map((link) => {
+                  const isActive =
+                    link.href === "/"
+                      ? pathname === "/"
+                      : pathname === link.href || pathname.startsWith(`${link.href}/`);
+                  return (
+                    <div key={link.href}>
+                      <Link
+                        href={link.href}
+                        prefetch={true}
+                        onClick={() => setMobileOpen(false)}
+                        onPointerDown={() => router.prefetch(link.href)}
+                        className={cn(
+                          "block py-2.5 transition-all duration-75 active:scale-98 cursor-pointer select-none",
+                          isActive
+                            ? "text-dark-teal font-bold pl-2 border-l-2 border-dark-teal bg-golden-orange/10 rounded-r-md"
+                            : "text-ink-black hover:text-dark-teal border-b border-golden-orange/15"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    </div>
+                  );
+                })}
               </nav>
 
               <div className="pt-3 border-t border-golden-orange/20 flex items-center justify-between text-xs font-ui">
@@ -179,7 +186,13 @@ export function Navbar() {
           </Popover>
 
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+          <Link
+            href="/"
+            prefetch={true}
+            onMouseEnter={() => router.prefetch("/")}
+            onPointerDown={() => router.prefetch("/")}
+            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 active:scale-98 transition-transform cursor-pointer"
+          >
             <div className="relative h-14 sm:h-16 w-auto flex items-center justify-center shrink-0">
               <Image
                 src="/images/logo.webp"
@@ -202,33 +215,43 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation */}
+        {/* Center: Desktop Navigation with Zero-Lag Instant Click & Eager Prefetch */}
         <nav className="hidden lg:flex items-center justify-center flex-1 mx-6 xl:mx-10" aria-label="Main Navigation">
-          <div className="flex flex-row flex-nowrap items-center justify-center gap-7 lg:gap-8 xl:gap-9 whitespace-nowrap">
-            <Link
-              href="/"
-              className={navLink}
-            >
-              Home
-            </Link>
-            <Link
-              href="/products"
-              className={navLink}
-            >
-              Products
-            </Link>
-            <Link
-              href="/about"
-              className={navLink}
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className={navLink}
-            >
-              Contact
-            </Link>
+          <div className="flex flex-row flex-nowrap items-center justify-center gap-6 lg:gap-8 xl:gap-9 whitespace-nowrap">
+            {NAV_LINKS.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname === link.href || pathname.startsWith(`${link.href}/`);
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  prefetch={true}
+                  onMouseEnter={() => router.prefetch(link.href)}
+                  onPointerDown={() => router.prefetch(link.href)}
+                  className={cn(
+                    "relative inline-flex flex-col items-center justify-center h-10 px-3 font-ui text-xs uppercase tracking-widest outline-none border-none leading-none cursor-pointer select-none transition-all duration-100 active:scale-95",
+                    isActive
+                      ? onHero
+                        ? "text-golden-orange font-bold drop-shadow-xs"
+                        : "text-dark-teal font-bold drop-shadow-xs"
+                      : cn(fg, fgHover, "font-semibold")
+                  )}
+                >
+                  <span className="py-1">{link.label}</span>
+                  {isActive && (
+                    <span
+                      className={cn(
+                        "absolute -bottom-0.5 w-5 h-0.5 rounded-full transition-all duration-300",
+                        onHero ? "bg-golden-orange shadow-xs" : "bg-dark-teal shadow-xs"
+                      )}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </nav>
 

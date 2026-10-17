@@ -19,6 +19,8 @@ const sareeMask: React.CSSProperties = {
   WebkitMaskImage: `url(${LAYERS}/mask-hd.png)`,
   maskSize: "100% 100%",
   WebkitMaskSize: "100% 100%",
+  maskPosition: "center center",
+  WebkitMaskPosition: "center center",
   maskRepeat: "no-repeat",
   WebkitMaskRepeat: "no-repeat",
   imageRendering: "-webkit-optimize-contrast",
@@ -71,11 +73,10 @@ export function DrapeStage({
 
   return (
     <div className="absolute inset-0">
-      {/* Every model layer sits in one box, so zooming/turning the box keeps them aligned; 108% fills
-        the arch while keeping her head and hem in frame. The backdrop is drawn by the parent frame. */}
+      {/* Every model layer sits in one box; 1:1 aspect ratio keeps mask, model and folds aligned */}
       <motion.div
         className="absolute inset-0 isolate"
-        style={{ scale: 1.08, transformPerspective: 1400 }}
+        style={{ scale: 1.0, transformPerspective: 1400 }}
         animate={{ rotateY: still ? 0 : [-TURN, TURN, -TURN] }}
         transition={still ? { duration: 0.6 } : SWAY}
       >
@@ -90,6 +91,7 @@ export function DrapeStage({
           fill
           sizes={SIZES}
           quality={QUALITY}
+          priority
           className="object-cover [image-rendering:-webkit-optimize-contrast]"
         />
 
@@ -176,7 +178,7 @@ export function DrapeStage({
               fill
               sizes={SIZES}
               quality={QUALITY}
-              className="object-cover"
+              className="object-cover object-top"
             />
           </motion.div>
         )}

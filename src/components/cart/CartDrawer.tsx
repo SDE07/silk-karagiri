@@ -57,49 +57,84 @@ export function CartDrawer() {
               </p>
             </div>
           ) : (
-            items.map(({ product, quantity }) => (
-              <div
-                key={product.id}
-                className="flex gap-4 p-3.5 rounded-xl border border-golden-orange/20 bg-white/70 shadow-2xs"
-              >
-                <div className="relative w-16 h-20 rounded-lg overflow-hidden shrink-0 border border-golden-orange/20">
-                  <Image src={product.image} alt={product.name} fill className="object-cover" />
-                </div>
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <h4 className="font-heading-sub text-sm font-bold text-ink-black line-clamp-1">
-                      {product.name}
-                    </h4>
-                    <p className="font-ui text-xs font-semibold text-dark-teal mt-0.5">
-                      {formatPrice(product.price)}
-                    </p>
+            items.map(({ product, quantity }) => {
+              const maxStock = product.stockQuantity ?? 50;
+              const isMaxReached = quantity >= maxStock;
+
+              return (
+                <div
+                  key={product.id}
+                  className="flex gap-4 p-3.5 rounded-xl border border-golden-orange/20 bg-white/80 shadow-2xs"
+                >
+                  <div className="relative w-16 h-20 rounded-lg overflow-hidden shrink-0 border border-golden-orange/20">
+                    <Image src={product.image} alt={product.name} fill className="object-cover" />
                   </div>
-                  <div className="flex items-center justify-between mt-2 font-ui">
-                    <div className="flex items-center border border-golden-orange/30 rounded-full text-xs bg-vanilla-custard-800/50">
-                      <button
-                        onClick={() => updateQuantity(product.id, quantity - 1)}
-                        className="px-2.5 py-0.5 hover:bg-vanilla-custard-700 rounded-l-full cursor-pointer text-ink-black"
-                      >
-                        -
-                      </button>
-                      <span className="px-2 font-bold text-ink-black">{quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(product.id, quantity + 1)}
-                        className="px-2.5 py-0.5 hover:bg-vanilla-custard-700 rounded-r-full cursor-pointer text-ink-black"
-                      >
-                        +
-                      </button>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-start justify-between gap-1">
+                        <h4 className="font-heading-sub text-sm font-bold text-ink-black line-clamp-1">
+                          {product.name}
+                        </h4>
+                        {/* Rating Review Badge */}
+                        <div className="flex items-center gap-0.5 text-[10px] font-bold text-golden-orange-500 shrink-0">
+                          <span>★</span>
+                          <span>{product.rating || 4.9}</span>
+                        </div>
+                      </div>
+
+                      {product.fabric && (
+                        <p className="font-ui text-[10.5px] text-dark-teal-400 font-medium truncate">
+                          {product.fabric}
+                        </p>
+                      )}
+
+                      <p className="font-ui text-xs font-semibold text-dark-teal mt-0.5">
+                        {formatPrice(product.price)}
+                      </p>
                     </div>
-                    <button
-                      onClick={() => removeItem(product.id)}
-                      className="font-ui text-xs text-brown-red hover:text-oxidized-iron hover:underline cursor-pointer"
-                    >
-                      Remove
-                    </button>
+
+                    <div className="flex items-center justify-between mt-2 font-ui">
+                      <div className="flex items-center border border-golden-orange/30 rounded-full text-xs bg-vanilla-custard-800/50">
+                        <button
+                          onClick={() => updateQuantity(product.id, quantity - 1)}
+                          className="px-2.5 py-0.5 hover:bg-vanilla-custard-700 rounded-l-full cursor-pointer text-ink-black"
+                          title="Decrease"
+                        >
+                          -
+                        </button>
+                        <span className="px-2 font-bold text-ink-black">{quantity}</span>
+                        <button
+                          disabled={isMaxReached}
+                          onClick={() => updateQuantity(product.id, quantity + 1)}
+                          className={`px-2.5 py-0.5 rounded-r-full text-ink-black ${
+                            isMaxReached
+                              ? "opacity-40 cursor-not-allowed"
+                              : "hover:bg-vanilla-custard-700 cursor-pointer"
+                          }`}
+                          title={isMaxReached ? `Only ${maxStock} units available` : "Increase"}
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {product.stockQuantity && product.stockQuantity <= 4 && (
+                          <span className="text-[10px] text-amber-700 font-medium bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+                            Only {product.stockQuantity} left
+                          </span>
+                        )}
+                        <button
+                          onClick={() => removeItem(product.id)}
+                          className="font-ui text-xs text-brown-red hover:text-oxidized-iron hover:underline cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 

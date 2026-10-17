@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AdminProvider } from "@/context/AdminContext";
 import { CartProvider } from "@/context/CartContext";
-import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { FindHeirloomCta } from "@/components/common/FindHeirloomCta";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { SilkCurtainIntro } from "@/components/common/SilkCurtainIntro";
+import { StorefrontShell } from "@/components/layout/StorefrontShell";
 import { APP_CONFIG } from "@/lib/constants";
 import {
   Cormorant_Garamond,
@@ -91,17 +87,11 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-screen flex flex-col bg-vanilla-custard-900 text-ink-black-300 font-body antialiased selection:bg-golden-orange/20 selection:text-ink-black"
       >
-        <CartProvider>
-          {/* Silk Curtain Intro — fires on every page load */}
-          <SilkCurtainIntro />
-          {/* Announcement Bar: Smart Rotating Carousel */}
-          <AnnouncementBar />
-          <Navbar />
-          <CartDrawer />
-          <main className="flex-1">{children}</main>
-          <FindHeirloomCta />
-          <Footer />
-        </CartProvider>
+        <AdminProvider>
+          <CartProvider>
+            <StorefrontShell>{children}</StorefrontShell>
+          </CartProvider>
+        </AdminProvider>
       </body>
     </html>
   );

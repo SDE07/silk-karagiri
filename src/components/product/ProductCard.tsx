@@ -51,15 +51,29 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="flex flex-col flex-1 p-5 justify-between gap-4">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            {/* Sub-label: Category in dark_teal[400] */}
-            <span className="font-ui text-[11px] uppercase tracking-widest text-dark-teal-400 font-semibold">
-              {product.category}
-            </span>
-            {/* Star Rating in Gold / Zari */}
+            <div className="flex items-center gap-1.5 truncate max-w-[65%]">
+              <span className="font-ui text-[11px] uppercase tracking-widest text-dark-teal-400 font-semibold shrink-0">
+                {product.category}
+              </span>
+              {product.fabric && (
+                <>
+                  <span className="text-[#b8862b]/40 text-[10px] shrink-0">•</span>
+                  <span className="font-ui text-[10.5px] text-[#7a5a2e] font-medium truncate">
+                    {product.fabric}
+                  </span>
+                </>
+              )}
+            </div>
+            {/* Star Rating & Review Count in Gold / Zari */}
             {product.rating && (
-              <div className="flex items-center gap-1 font-ui text-xs">
+              <div className="flex items-center gap-1 font-ui text-xs shrink-0">
                 <span className="text-golden-orange">★</span>
-                <span className="font-medium text-ink-black-300 text-[11px]">{product.rating}</span>
+                <span className="font-medium text-ink-black-300 text-[11px]">
+                  {product.rating}
+                  {product.reviewCount ? (
+                    <span className="text-ink-black-300/60 ml-0.5 font-normal">({product.reviewCount})</span>
+                  ) : null}
+                </span>
               </div>
             )}
           </div>
@@ -77,26 +91,36 @@ export function ProductCard({ product }: { product: Product }) {
 
         {/* Pricing & CTA Container with 1px Gold Divider */}
         <div className="pt-3 border-t border-golden-orange/20 flex items-center justify-between">
-          <div className="flex items-baseline gap-1.5">
-            {/* Price in Montserrat */}
-            <span className="font-ui text-base font-bold text-dark-teal tracking-tight">
-              {formatPrice(product.price)}
-            </span>
-            {product.originalPrice && (
-              <span className="font-ui text-xs line-through text-ink-black-300/50">
-                {formatPrice(product.originalPrice)}
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-1.5">
+              {/* Price in Montserrat */}
+              <span className="font-ui text-base font-bold text-dark-teal tracking-tight">
+                {formatPrice(product.price)}
+              </span>
+              {product.originalPrice && (
+                <span className="font-ui text-xs line-through text-ink-black-300/50">
+                  {formatPrice(product.originalPrice)}
+                </span>
+              )}
+            </div>
+            {/* Low Stock Urgency Indicator */}
+            {product.stockQuantity !== undefined && product.stockQuantity > 0 && product.stockQuantity <= 4 && (
+              <span className="font-ui text-[10px] text-amber-700 font-semibold mt-0.5">
+                Only {product.stockQuantity} drapes left
               </span>
             )}
           </div>
 
-          {/* Primary CTA: Dark Teal with Vanilla Custard text */}
+          {/* Primary CTA */}
           <Button
             size="sm"
             variant="primary"
+            disabled={!product.inStock || product.stockQuantity === 0}
             onClick={() => addItem(product)}
             aria-label={`Add ${product.name} to shopping bag`}
+            className={!product.inStock || product.stockQuantity === 0 ? "opacity-50 cursor-not-allowed" : ""}
           >
-            Add to Bag
+            {!product.inStock || product.stockQuantity === 0 ? "Sold Out" : "Add to Bag"}
           </Button>
         </div>
       </div>

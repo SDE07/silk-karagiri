@@ -259,6 +259,7 @@ export interface Product {
   border?: string;
   sku?: string;
   inStock?: boolean;
+  stockQuantity?: number;
   tags: ProductTag[];
 }
 
@@ -466,7 +467,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             
             {/* VERTICAL THUMBNAIL STRIP — Horizontal LTR on mobile, vertical left-scrollbar on desktop */}
             <div
-              className="order-2 sm:order-1 flex sm:flex-col gap-2 overflow-x-auto sm:overflow-y-auto max-h-[100px] sm:max-h-[480px] lg:max-h-[505px] xl:max-h-[515px] pl-1 sm:pl-1.5 pr-0 pb-1 sm:pb-0 shrink-0 touch-pan-x [-webkit-overflow-scrolling:touch] sm:[direction:rtl] [scrollbar-color:#b8862b_#f8f5ee] scrollbar-none sm:scrollbar-thin"
+              className="order-2 sm:order-1 flex sm:flex-col gap-2 overflow-x-auto sm:overflow-y-auto max-h-[100px] sm:max-h-[680px] md:max-h-[720px] lg:max-h-[760px] xl:max-h-[800px] pl-1 sm:pl-1.5 pr-0 pb-1 sm:pb-0 shrink-0 touch-pan-x [-webkit-overflow-scrolling:touch] sm:[direction:rtl] [scrollbar-color:#b8862b_#f8f5ee] scrollbar-none sm:scrollbar-thin"
               style={{ scrollbarWidth: "thin" }}
             >
               {imagesList.map((imgSrc, idx) => {
@@ -498,9 +499,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               })}
             </div>
 
-            {/* LARGE HERO DRAPE PREVIEW - Balanced height matching right column */}
+            {/* LARGE HERO DRAPE PREVIEW - Balanced generous height displaying full model face & drape */}
             <div className="order-1 sm:order-2 flex-1 flex flex-col justify-between gap-2.5">
-              <div className="relative w-full h-[380px] xs:h-[420px] sm:h-[470px] lg:h-[495px] xl:h-[505px] overflow-hidden rounded-2xl bg-vanilla-custard-800/60 shadow-lg shrink-0">
+              <div className="relative w-full h-[520px] xs:h-[580px] sm:h-[660px] md:h-[720px] lg:h-[760px] xl:h-[800px] overflow-hidden rounded-2xl bg-vanilla-custard-800/60 shadow-lg shrink-0 flex items-center justify-center">
                 {/* Warm studio spotlight backdrop for 3D model */}
                 {viewMode === "model" && (
                   <>
@@ -515,22 +516,24 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   </>
                 )}
 
-                {/* DrapeStage from Home Atelier: 3D Turntable Sway + Swatch Draping + Photo Crossfade */}
-                <DrapeStage
-                  drape={currentDrape}
-                  photo={currentImage}
-                  alt={`Model wearing ${product.name} look ${activeIndex + 1}`}
-                  view={viewMode}
-                  sweep="look"
-                />
+                {/* Aspect-Locked Virtual Drape Stage: exactly 533/822 so mask, model, and shade match 100% */}
+                <div className="relative h-full w-auto aspect-[533/822] mx-auto overflow-hidden">
+                  <DrapeStage
+                    drape={currentDrape}
+                    photo={currentImage}
+                    alt={`Model wearing ${product.name} look ${activeIndex + 1}`}
+                    view={viewMode}
+                    sweep="look"
+                  />
+                </div>
 
                 {/* Bespoke Botanical Floral Corner Flourish */}
-                <div className="pointer-events-none absolute top-0 left-0 z-[8] w-28 sm:w-36 md:w-44 aspect-[360/580] select-none">
+                <div className="pointer-events-none absolute top-0 left-0 z-[8] w-20 sm:w-24 md:w-28 aspect-[360/580] select-none opacity-40">
                   <img
                     src="/images/floral-corner.png"
                     alt=""
                     aria-hidden="true"
-                    className="w-full h-full object-contain opacity-90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.18)]"
+                    className="w-full h-full object-contain opacity-60 drop-shadow-[0_2px_4px_rgba(0,0,0,0.12)]"
                   />
                 </div>
 
@@ -635,39 +638,39 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
           </div>
 
-          {/* RIGHT: Saree Heirloom Details, Pricing, Specs & Buy CTA - Compact Decreased Spacing */}
-          <div className="lg:col-span-6 xl:col-span-6 flex flex-col justify-between space-y-3">
+          {/* RIGHT: Saree Heirloom Details, Pricing, Specs & Buy CTA - Generous Luxury Spacing & Clear Typography */}
+          <div className="lg:col-span-6 xl:col-span-6 flex flex-col justify-between space-y-4 sm:space-y-5">
             
             {/* Header: Title & Subtitle + Right-aligned Bookmark & Share Actions */}
             <div className="flex items-start justify-between gap-3">
-              <div className="space-y-0.5 flex-1 min-w-0">
+              <div className="space-y-1 flex-1 min-w-0">
                 <h1
-                  className="font-heading-main text-[1.15rem] xs:text-[1.3rem] sm:text-2xl md:text-3xl font-bold text-[#6b1426] tracking-tight leading-tight truncate sm:whitespace-normal"
+                  className="font-heading-main text-2xl sm:text-3xl lg:text-[2.1rem] font-bold text-[#6b1426] tracking-tight leading-tight truncate sm:whitespace-normal"
                   title={product.name}
                 >
                   {product.name}
                 </h1>
 
                 {product.subtitle && (
-                  <p className="font-heading-sub text-xs sm:text-sm md:text-base text-[#004e5e] font-medium italic truncate sm:whitespace-normal">
+                  <p className="font-heading-sub text-sm sm:text-base md:text-lg text-[#004e5e] font-medium italic truncate sm:whitespace-normal">
                     {product.subtitle}
                   </p>
                 )}
 
                 {product.sku && (
-                  <p className="font-mono text-[10.5px] text-[#7a5a2e]/70 pt-0.5">
+                  <p className="font-mono text-xs text-[#7a5a2e]/75 pt-0.5">
                     SKU: {product.sku}
                   </p>
                 )}
               </div>
 
               {/* Bookmark & Share Buttons on the Right Side */}
-              <div className="flex items-center gap-1.5 shrink-0 pt-0.5">
+              <div className="flex items-center gap-2 shrink-0 pt-0.5">
                 <button
                   type="button"
                   onClick={() => setIsFavorite(!isFavorite)}
                   className={cn(
-                    "h-9 w-9 sm:h-9.5 sm:w-9.5 rounded-xl border flex items-center justify-center transition-all cursor-pointer shadow-2xs",
+                    "h-10 w-10 sm:h-11 sm:w-11 rounded-xl border flex items-center justify-center transition-all cursor-pointer shadow-2xs",
                     isFavorite
                       ? "bg-[#6b1426] text-white border-[#6b1426] shadow-xs scale-105"
                       : "bg-white text-[#7a5a2e] border-[#b8862b]/35 hover:text-[#6b1426] hover:border-[#6b1426]/40 hover:bg-[#fdfbf7]"
@@ -677,7 +680,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 >
                   <Bookmark
                     className={cn(
-                      "h-4 w-4 transition-transform",
+                      "h-4.5 w-4.5 transition-transform",
                       isFavorite ? "fill-white text-white" : "text-[#7a5a2e]"
                     )}
                   />
@@ -686,97 +689,149 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="h-9 w-9 sm:h-9.5 sm:w-9.5 rounded-xl border bg-white text-[#7a5a2e] border-[#b8862b]/35 hover:text-[#6b1426] hover:border-[#6b1426]/40 hover:bg-[#fdfbf7] flex items-center justify-center transition-all cursor-pointer shadow-2xs relative"
+                  className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl border bg-white text-[#7a5a2e] border-[#b8862b]/35 hover:text-[#6b1426] hover:border-[#6b1426]/40 hover:bg-[#fdfbf7] flex items-center justify-center transition-all cursor-pointer shadow-2xs relative"
                   aria-label="Share saree"
                   title="Share this saree"
                 >
                   {copiedShare ? (
-                    <Check className="h-4 w-4 text-emerald-600" />
+                    <Check className="h-4.5 w-4.5 text-emerald-600" />
                   ) : (
-                    <Share2 className="h-4 w-4" />
+                    <Share2 className="h-4.5 w-4.5" />
                   )}
                 </button>
               </div>
             </div>
 
             {/* Pricing Container — Refined luxury ivory-gold gradient card */}
-            <div className="p-3 rounded-xl bg-gradient-to-br from-[#fcfaf5] to-[#f6f0e4] border border-[#b8862b]/30 shadow-xs space-y-1">
-              <div className="flex items-baseline gap-2">
-                <span className="font-ui text-2xl sm:text-[1.7rem] font-extrabold text-[#004e5e] tracking-tight">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-gradient-to-br from-[#fcfaf5] to-[#f6f0e4] border border-[#b8862b]/30 shadow-xs space-y-1.5">
+              <div className="flex items-baseline gap-2.5">
+                <span className="font-ui text-3xl sm:text-[2.1rem] font-extrabold text-[#004e5e] tracking-tight">
                   {product.currency}{product.price.toLocaleString("en-IN")}
                 </span>
                 {product.originalPrice && (
-                  <span className="font-ui text-sm sm:text-base line-through text-[#7a5a2e]/60">
+                  <span className="font-ui text-base sm:text-lg line-through text-[#7a5a2e]/60">
                     {product.currency}{product.originalPrice.toLocaleString("en-IN")}
                   </span>
                 )}
                 {product.originalPrice && (
-                  <span className="px-2 py-0.5 rounded-full text-[10.5px] font-ui font-bold bg-[#6b1426]/10 text-[#6b1426] border border-[#6b1426]/20">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-ui font-bold bg-[#6b1426]/10 text-[#6b1426] border border-[#6b1426]/20">
                     Save {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs font-ui text-[#7a5a2e]">
+              <div className="flex flex-wrap items-center gap-2 text-xs sm:text-[13px] font-ui text-[#7a5a2e]">
                 <span>Inclusive of all taxes</span>
                 <span>•</span>
-                <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block animate-pulse" />
-                  In stock, ready to ship
-                </span>
-                <span>•</span>
-                <span className="px-1.5 py-0.5 rounded-md bg-[#6b1426]/10 text-[#6b1426] font-ui font-bold text-[10.5px] border border-[#6b1426]/20">
-                  Only 3 left in loom
-                </span>
+                {product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0) ? (
+                  <span className="text-rose-700 font-semibold flex items-center gap-1.5 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-300">
+                    <span className="w-2 h-2 rounded-full bg-rose-600 inline-block animate-ping" />
+                    <span className="font-bold text-rose-800">Stock Not Available (Out of Stock)</span>
+                  </span>
+                ) : product.stockQuantity !== undefined && product.stockQuantity < 5 ? (
+                  <>
+                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block animate-pulse" />
+                      In stock, ready to ship
+                    </span>
+                    <span>•</span>
+                    <span className="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 font-ui font-bold text-xs border border-rose-300 flex items-center gap-1 shadow-2xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-600 inline-block animate-pulse" />
+                      Critical Stock: Only {product.stockQuantity} Left!
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 inline-block animate-pulse" />
+                      In stock, ready to ship
+                    </span>
+                    <span>•</span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#6b1426]/10 text-[#6b1426] font-ui font-bold text-xs border border-[#6b1426]/20">
+                      {product.stockQuantity !== undefined ? `${product.stockQuantity} drapes available in vault` : "Exclusive Handloom Edition"}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Direct Action Buttons: Quantity, ADD TO CART & BUY NOW */}
-            <div className="space-y-2 pt-0.5">
-              <div className="flex items-center gap-1.5 sm:gap-2.5">
-                {/* Quantity Stepper (Total Number) */}
-                <div className="inline-flex items-center rounded-xl border border-[#b8862b]/35 bg-white px-1.5 py-1 sm:px-2.5 sm:py-1.5 shadow-2xs shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-5.5 h-5.5 sm:w-7 sm:h-7 flex items-center justify-center text-[#7a5a2e] hover:text-[#6b1426] transition-colors rounded-lg hover:bg-[#b8862b]/10 cursor-pointer"
-                    aria-label="Decrease quantity"
-                  >
-                    <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  </button>
-                  <span className="w-5 sm:w-7 text-center font-ui font-bold text-xs sm:text-sm text-[#2a221b] select-none">
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="w-5.5 h-5.5 sm:w-7 sm:h-7 flex items-center justify-center text-[#7a5a2e] hover:text-[#6b1426] transition-colors rounded-lg hover:bg-[#b8862b]/10 cursor-pointer"
-                    aria-label="Increase quantity"
-                  >
-                    <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  </button>
-                </div>
+            <div className="space-y-2.5 pt-0.5">
+              <div className="flex items-center gap-2 sm:gap-3">
+                {product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0) ? (
+                  <div className="flex-1 flex items-center gap-2">
+                    <Button
+                      size="default"
+                      disabled
+                      className="flex-1 min-w-0 bg-neutral-200 text-neutral-500 font-semibold text-xs sm:text-sm uppercase tracking-wider py-3.5 px-4 rounded-xl h-auto cursor-not-allowed justify-center shadow-none"
+                    >
+                      Sold Out • Stock Not Available
+                    </Button>
+                    <a
+                      href={`https://wa.me/?text=${encodeURIComponent(
+                        `Hi Silk Karagiri, please notify me when ${product.name} (Look ${activeIndex + 1}) is back in stock.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-ui text-xs font-semibold shadow-xs transition-colors shrink-0"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Notify on Restock</span>
+                    </a>
+                  </div>
+                ) : (
+                  <>
+                    {/* Quantity Stepper (Total Number) */}
+                    <div className="inline-flex items-center rounded-xl border border-[#b8862b]/35 bg-white px-2 py-1.5 sm:px-3 sm:py-2 shadow-2xs shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[#7a5a2e] hover:text-[#6b1426] transition-colors rounded-lg hover:bg-[#b8862b]/10 cursor-pointer"
+                        aria-label="Decrease quantity"
+                      >
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="w-6 sm:w-8 text-center font-ui font-bold text-sm sm:text-base text-[#2a221b] select-none">
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQuantity(
+                            product.stockQuantity !== undefined
+                              ? Math.min(product.stockQuantity, quantity + 1)
+                              : quantity + 1
+                          )
+                        }
+                        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[#7a5a2e] hover:text-[#6b1426] transition-colors rounded-lg hover:bg-[#b8862b]/10 cursor-pointer"
+                        aria-label="Increase quantity"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
 
-                {/* ADD TO CART */}
-                <Button
-                  size="default"
-                  variant="primary"
-                  onClick={() => onAddToCart?.(product, quantity, activeIndex)}
-                  className="flex-1 min-w-0 gap-1 sm:gap-1.5 bg-[#004e5e] hover:bg-[#003b47] text-white shadow-xs font-semibold text-[11px] sm:text-xs uppercase tracking-normal sm:tracking-wider py-2.5 sm:py-3 px-2 sm:px-3 cursor-pointer rounded-xl h-auto whitespace-nowrap justify-center"
-                >
-                  <ShoppingCart className="h-3.5 w-3.5 shrink-0" />
-                  <span>Add To Cart</span>
-                </Button>
+                    {/* ADD TO CART */}
+                    <Button
+                      size="default"
+                      variant="primary"
+                      onClick={() => onAddToCart?.(product, quantity, activeIndex)}
+                      className="flex-1 min-w-0 gap-2 bg-[#004e5e] hover:bg-[#003b47] text-white shadow-xs font-bold text-xs sm:text-sm uppercase tracking-wider py-3.5 sm:py-4 px-3 sm:px-4 cursor-pointer rounded-xl h-auto whitespace-nowrap justify-center"
+                    >
+                      <ShoppingCart className="h-4 w-4 shrink-0" />
+                      <span>Add To Cart</span>
+                    </Button>
 
-                {/* BUY NOW */}
-                <Button
-                  size="default"
-                  variant="royal"
-                  onClick={() => onBuyNow?.(product, quantity, activeIndex)}
-                  className="flex-1 min-w-0 gap-1 sm:gap-1.5 bg-[#6b1426] hover:bg-[#520f1d] text-white shadow-xs font-semibold text-[11px] sm:text-xs uppercase tracking-normal sm:tracking-wider py-2.5 sm:py-3 px-2 sm:px-3 cursor-pointer border border-[#b8862b]/30 rounded-xl h-auto whitespace-nowrap justify-center"
-                >
-                  <ShoppingBag className="h-3.5 w-3.5 shrink-0" />
-                  <span>Buy Now</span>
-                </Button>
+                    {/* BUY NOW */}
+                    <Button
+                      size="default"
+                      variant="royal"
+                      onClick={() => onBuyNow?.(product, quantity, activeIndex)}
+                      className="flex-1 min-w-0 gap-2 bg-[#6b1426] hover:bg-[#520f1d] text-white shadow-xs font-bold text-xs sm:text-sm uppercase tracking-wider py-3.5 sm:py-4 px-3 sm:px-4 cursor-pointer border border-[#b8862b]/30 rounded-xl h-auto whitespace-nowrap justify-center"
+                    >
+                      <ShoppingBag className="h-4 w-4 shrink-0" />
+                      <span>Buy Now</span>
+                    </Button>
+                  </>
+                )}
               </div>
 
               {/* WhatsApp Support Link */}
@@ -787,50 +842,50 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-ui font-medium text-emerald-800 hover:text-emerald-950 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-ui font-medium text-emerald-800 hover:text-emerald-950 transition-colors"
                 >
-                  <MessageCircle className="w-3 h-3 text-emerald-600" />
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
                   Need help styling or custom blouse stitching? Chat with us on WhatsApp
                 </a>
               </div>
             </div>
 
             {/* Special Inaugural Offers Card */}
-            <div className="p-2.5 sm:p-3 rounded-xl border border-dashed border-[#b8862b]/50 bg-[#fffdf9] flex items-center justify-between gap-2.5 shadow-2xs">
+            <div className="p-3 sm:p-3.5 rounded-xl border border-dashed border-[#b8862b]/50 bg-[#fffdf9] flex items-center justify-between gap-3 shadow-2xs">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-[#6b1426]" />
-                  <span className="text-xs font-ui font-bold uppercase tracking-wider text-[#6b1426]">
+                  <Tag className="w-4 h-4 text-[#6b1426]" />
+                  <span className="text-xs sm:text-[13px] font-ui font-bold uppercase tracking-wider text-[#6b1426]">
                     15% OFF Master Weaves
                   </span>
                 </div>
-                <p className="text-[10.5px] font-body text-[#7a5a2e]">
+                <p className="text-xs font-body text-[#7a5a2e]">
                   Flat 15% discount on handcrafted heirloom pure silk drapes
                 </p>
               </div>
-              <span className="px-2 py-0.5 rounded bg-[#6b1426]/10 text-[#6b1426] font-mono text-[11px] font-bold border border-[#6b1426]/20 shrink-0">
+              <span className="px-3 py-1 rounded-md bg-[#6b1426]/10 text-[#6b1426] font-mono text-xs font-bold border border-[#6b1426]/20 shrink-0">
                 SILK15
               </span>
             </div>
 
             {/* Saree Attributes & Tags: Fixed 2 per row with luxury ivory/gold styling */}
-            <div className="space-y-1.5 pt-0.5">
-              <span className="text-[11px] font-ui font-bold uppercase tracking-wider text-[#7a5a2e]">
+            <div className="space-y-2 pt-1">
+              <span className="text-xs font-ui font-bold uppercase tracking-widest text-[#7a5a2e]">
                 Specifications:
               </span>
-              <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                 {product.tags.map((tag, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#fdfbf7] border border-[#b8862b]/25 shadow-2xs hover:border-[#b8862b]/50 hover:bg-white transition-all group min-w-0"
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#fdfbf7] border border-[#b8862b]/25 shadow-2xs hover:border-[#b8862b]/50 hover:bg-white transition-all group min-w-0"
                     title={tag.label}
                   >
                     {tag.icon ? (
-                      <tag.icon className="h-3 w-3 text-[#b8862b] shrink-0 group-hover:text-[#6b1426] transition-colors" />
+                      <tag.icon className="h-3.5 w-3.5 text-[#b8862b] shrink-0 group-hover:text-[#6b1426] transition-colors" />
                     ) : (
                       <span className="w-1.5 h-1.5 rounded-full bg-[#b8862b] shrink-0" />
                     )}
-                    <span className="text-[10.5px] sm:text-[11px] font-ui font-semibold uppercase tracking-wider text-[#2a221b] leading-tight line-clamp-1">
+                    <span className="text-xs sm:text-[12.5px] font-ui font-semibold uppercase tracking-wider text-[#2a221b] leading-tight line-clamp-1">
                       {tag.label}
                     </span>
                   </div>
@@ -839,32 +894,32 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Story / Description */}
-            <div className="space-y-0.5 pt-1 border-t border-[#b8862b]/20">
-              <span className="text-[11px] font-ui font-semibold uppercase tracking-wider text-[#7a5a2e]">
+            <div className="space-y-1 pt-1.5 border-t border-[#b8862b]/20">
+              <span className="text-xs font-ui font-bold uppercase tracking-widest text-[#7a5a2e]">
                 The Loom Heritage Story
               </span>
-              <p className="font-body text-xs sm:text-[12.5px] text-[#413428] leading-relaxed line-clamp-2">
+              <p className="font-body text-xs sm:text-sm text-[#413428] leading-relaxed line-clamp-2">
                 {product.description}
               </p>
             </div>
 
             {/* Quick Customer Review Anchor & Rating Link */}
-            <div className="pt-2 border-t border-[#b8862b]/15 flex flex-wrap items-center justify-between gap-2 text-xs font-ui">
+            <div className="pt-2.5 border-t border-[#b8862b]/15 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-ui">
               <button
                 type="button"
                 onClick={() => {
                   const el = document.getElementById("customer-reviews-section");
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="flex items-center gap-1.5 text-[#6b1426] hover:text-[#004e5e] font-semibold transition-colors group cursor-pointer text-left flex-wrap"
+                className="flex items-center gap-2 text-[#6b1426] hover:text-[#004e5e] font-semibold transition-colors group cursor-pointer text-left flex-wrap"
               >
                 <div className="flex text-amber-500">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <span className="font-bold text-[#2a221b]">4.9 / 5</span>
-                <span className="text-[#7a5a2e] group-hover:underline">
+                <span className="font-bold text-[#2a221b] text-xs sm:text-sm">4.9 / 5</span>
+                <span className="text-[#7a5a2e] group-hover:underline text-xs sm:text-sm">
                   ({reviewsList.length} Verified Reviews)
                 </span>
               </button>
@@ -872,9 +927,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               <button
                 type="button"
                 onClick={() => setIsReviewModalOpen(true)}
-                className="text-xs font-ui font-semibold text-[#6b1426] hover:text-[#004e5e] transition-colors underline underline-offset-2 cursor-pointer flex items-center gap-1 shrink-0"
+                className="text-xs sm:text-sm font-ui font-semibold text-[#6b1426] hover:text-[#004e5e] transition-colors underline underline-offset-2 cursor-pointer flex items-center gap-1.5 shrink-0"
               >
-                <PenLine className="w-3 h-3" />
+                <PenLine className="w-3.5 h-3.5" />
                 <span>Write Review</span>
               </button>
             </div>
